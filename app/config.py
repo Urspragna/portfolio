@@ -57,7 +57,7 @@ class Settings(BaseSettings):
     max_context_chars: int = 4000
 
     # ─── Static frontend ───────────────────────────────────────────────────
-    public_dir: Path = ROOT  # serves index.html / lab.html / assets from project root
+    public_dir: Path = Field(default_factory=lambda: ROOT)  # serves index.html / lab.html / assets from project root
 
     model_config = SettingsConfigDict(
         env_file=str(ROOT / ".env"),
