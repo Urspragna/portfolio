@@ -118,16 +118,22 @@ app.include_router(demos_router)
 # Serve index.html, lab.html, the CV PDF, and any other static asset placed
 # in the project root. Defined routes (/api/*) take precedence over this mount.
 PUBLIC = Path(settings.public_dir)
-if (PUBLIC / "index.html").exists():
+INDEX_FILE = PUBLIC / "index.html"
+LAB_FILE = PUBLIC / "lab.html"
+
+print(f"[startup] PUBLIC={PUBLIC}, exists={PUBLIC.exists()}")
+print(f"[startup] INDEX_FILE={INDEX_FILE}, exists={INDEX_FILE.exists()}")
+
+if INDEX_FILE.exists():
     @app.get("/", include_in_schema=False)
     async def root() -> FileResponse:
-        return FileResponse(PUBLIC / "index.html")
+        return FileResponse(INDEX_FILE)
 
     @app.get("/lab", include_in_schema=False)
     async def lab() -> FileResponse:
-        target = PUBLIC / "lab.html"
-        if not target.exists():
+        if not LAB_FILE.exists():
             return JSONResponse({"detail": "lab.html not found"}, status_code=404)
+        return FileResponse(LAB_FILE)
         return FileResponse(target)
 
     # All remaining static files (CV PDF, future assets)
