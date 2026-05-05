@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Lab — Pragna's Portfolio</title>
+<meta name="description" content="Live AI demos: RAG, embeddings, sentiment, tokenisation — built with FastAPI, sentence-transformers, and Anthropic Claude." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%AA%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --bg-2: #101012; --bg-3: #16161a; --border: #1f1f23; --border-hl: #2a2a30;
+  --text: #e5e5e7; --text-muted: #8a8a94; --text-dim: #5a5a63;
+  --accent: #64ffda; --accent-2: #a78bfa; --accent-3: #60a5fa; --accent-4: #f472b6;
+  --glow: 0 0 40px rgba(100,255,218,.15);
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --sans: 'Inter', -apple-system, sans-serif;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.6; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+a { color: inherit; text-decoration: none; }
+::selection { background: var(--accent); color: #000; }
+
+/* radial glow */
+.glow { position: fixed; pointer-events: none; width: 700px; height: 700px; border-radius: 50%; filter: blur(120px); opacity: .15; z-index: -1; }
+.g1 { top: -200px; left: -200px; background: var(--accent-2); }
+.g2 { bottom: -300px; right: -200px; background: var(--accent); opacity: .1; }
+.noise { position: fixed; inset: 0; pointer-events: none; z-index: -1; opacity: .02;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+.container { width: 100%; max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+@media (max-width: 768px) { .container { padding: 0 20px; } }
+
+/* NAV */
+nav.top { position: sticky; top: 0; z-index: 50; padding: 16px 0; background: rgba(10,10,10,.8); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+nav.top .container { display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: var(--mono); font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.logo .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+.nav-actions { display: flex; gap: 10px; align-items: center; font-family: var(--mono); font-size: 12px; }
+.nav-actions a { color: var(--text-muted); padding: 8px 14px; border: 1px solid var(--border); border-radius: 6px; transition: all .2s; }
+.nav-actions a:hover { color: var(--accent); border-color: var(--accent); }
+.nav-actions .pill { padding: 5px 10px; border-radius: 999px; font-size: 11px; }
+.pill.green { color: var(--accent); border-color: rgba(100,255,218,.3); background: rgba(100,255,218,.05); }
+.pill.red { color: #ff8b8b; border-color: rgba(255,139,139,.3); background: rgba(255,139,139,.05); }
+.pill.amber { color: #ffbd6c; border-color: rgba(255,189,108,.3); background: rgba(255,189,108,.05); }
+
+/* HERO */
+.hero { padding: 80px 0 40px; }
+.hero .eyebrow { font-family: var(--mono); color: var(--accent); font-size: 13px; margin-bottom: 16px; display: inline-flex; align-items: center; gap: 10px; }
+.hero .eyebrow::before { content:''; width: 20px; height: 1px; background: var(--accent); }
+.hero h1 { font-size: clamp(34px, 5vw, 56px); font-weight: 800; letter-spacing: -.03em; line-height: 1.05; margin-bottom: 16px; }
+.hero h1 .accent { background: linear-gradient(135deg, var(--accent), var(--accent-3) 60%, var(--accent-2)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.hero p { color: var(--text-muted); font-size: 17px; max-width: 720px; }
+.hero p code { font-family: var(--mono); font-size: 14px; color: var(--accent); background: rgba(100,255,218,.07); padding: 2px 7px; border-radius: 4px; border: 1px solid rgba(100,255,218,.18); }
+
+/* TABS */
+.tabs { display: flex; gap: 6px; margin: 40px 0 24px; flex-wrap: wrap; padding: 6px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px; }
+.tab { font-family: var(--mono); font-size: 12px; padding: 10px 16px; border-radius: 8px; color: var(--text-muted); cursor: pointer; transition: all .2s; border: 1px solid transparent; flex: 1 1 auto; text-align: center; }
+.tab:hover { color: var(--text); }
+.tab.active { background: var(--bg-3); color: var(--accent); border-color: var(--border); box-shadow: 0 0 0 1px rgba(100,255,218,.15); }
+
+/* DEMO CARDS */
+.demo { display: none; padding-bottom: 80px; }
+.demo.active { display: block; }
+.demo-head { margin-bottom: 24px; }
+.demo-head .num { font-family: var(--mono); color: var(--accent); font-size: 13px; margin-bottom: 8px; }
+.demo-head h2 { font-size: clamp(24px, 3vw, 30px); font-weight: 700; letter-spacing: -.02em; margin-bottom: 8px; }
+.demo-head p { color: var(--text-muted); font-size: 15px; max-width: 720px; }
+
+/* PANEL */
+.panel { background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px; padding: 28px; margin-bottom: 20px; box-shadow: 0 16px 50px rgba(0,0,0,.25); }
+.panel h3 { font-size: 14px; font-family: var(--mono); color: var(--accent); margin-bottom: 14px; letter-spacing: .04em; text-transform: uppercase; }
+.panel .panel-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 700px) { .panel .panel-row { grid-template-columns: 1fr; } }
+
+label { display: block; font-family: var(--mono); font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .08em; }
+
+input[type=text], textarea {
+  width: 100%; background: var(--bg-3); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); padding: 12px 14px; font-family: var(--mono); font-size: 13.5px;
+  resize: vertical; min-height: 44px; transition: border-color .2s;
+}
+input:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(100,255,218,.08); }
+textarea.large { min-height: 96px; }
+
+.btn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 8px; font-family: var(--mono); font-size: 13px; font-weight: 500; transition: all .2s; cursor: pointer; border: 1px solid var(--accent); color: var(--accent); background: transparent; }
+.btn:hover { background: rgba(100,255,218,.08); transform: translateY(-1px); box-shadow: var(--glow); }
+.btn:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-primary { background: var(--accent); color: #0a0a0a; }
+.btn-primary:hover { filter: brightness(1.1); }
+.btn svg { width: 16px; height: 16px; }
+.controls { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 10px 18px; font-family: var(--mono); font-size: 13px; }
+.kv .k { color: var(--text-muted); }
+.kv .v { color: var(--text); }
+.kv .v.acc { color: var(--accent); }
+.kv .v.violet { color: var(--accent-2); }
+
+.bar { height: 8px; background: var(--bg-3); border-radius: 4px; overflow: hidden; margin: 8px 0; }
+.bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .4s ease; }
+
+.code { font-family: var(--mono); font-size: 12px; color: var(--text-muted); background: var(--bg-3); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; overflow: auto; max-height: 280px; white-space: pre-wrap; }
+.code .k { color: var(--accent-2); }
+.code .s { color: var(--accent); }
+.code .n { color: var(--accent-4); }
+
+.token { display: inline-block; padding: 2px 6px; margin: 3px; border-radius: 4px; font-family: var(--mono); font-size: 12px; }
+.token.w { background: rgba(100,255,218,.08); color: var(--accent); border: 1px solid rgba(100,255,218,.15); }
+.token.b { background: rgba(167,139,250,.08); color: var(--accent-2); border: 1px solid rgba(167,139,250,.15); }
+
+.hits { display: grid; gap: 10px; margin-top: 14px; }
+.hit { background: var(--bg-3); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; transition: border-color .2s; }
+.hit:hover { border-color: var(--border-hl); }
+.hit .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 12px; }
+.hit .title { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+.hit .score { font-family: var(--mono); font-size: 11px; color: var(--text-muted); padding: 3px 8px; background: var(--bg-2); border-radius: 999px; }
+.hit .preview { color: var(--text-muted); font-size: 13.5px; }
+
+.answer-box { background: linear-gradient(180deg, rgba(167,139,250,.05), transparent); border: 1px solid rgba(167,139,250,.2); border-radius: 8px; padding: 18px 22px; min-height: 60px; line-height: 1.7; color: var(--text); font-size: 14.5px; white-space: pre-wrap; }
+.answer-box em { color: var(--text-dim); font-size: 12px; }
+
+.note { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-top: 10px; }
+.note b { color: var(--accent); font-weight: 500; }
+
+.empty { color: var(--text-dim); font-family: var(--mono); font-size: 13px; padding: 18px 0; }
+
+/* learning sidebar */
+.learn { background: linear-gradient(180deg, var(--bg-2), var(--bg)); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; }
+.learn h4 { font-family: var(--mono); font-size: 12px; color: var(--accent-2); margin-bottom: 12px; letter-spacing: .06em; text-transform: uppercase; }
+.learn p { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; }
+.learn ol { padding-left: 18px; }
+.learn ol li { color: var(--text-muted); font-size: 14px; margin-bottom: 8px; }
+.learn ol li b { color: var(--text); font-weight: 600; }
+.learn ol li code { font-family: var(--mono); font-size: 12px; color: var(--accent); background: rgba(100,255,218,.06); padding: 1px 5px; border-radius: 3px; }
+
+footer { padding: 30px 0; border-top: 1px solid var(--border); text-align: center; font-family: var(--mono); font-size: 12px; color: var(--text-dim); }
+footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div>
+<div class="glow g2"></div>
+<div class="noise"></div>
+
+<nav class="top">
+  <div class="container">
+    <a href="/" class="logo"><span class="dot"></span>pragna.urs / lab</a>
+    <div class="nav-actions">
+      <span id="health-pill" class="pill amber">checking…</span>
+      <a href="/">← home</a>
+      <a href="/api/health" target="_blank">api ↗</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container">
+    <div class="eyebrow">$ python -m app.lab</div>
+    <h1>AI Learning <span class="accent">Lab.</span></h1>
+    <p>
+      Four hands-on demos that show what's actually happening inside an AI app — <strong>RAG retrieval</strong>, <strong>embeddings</strong>, <strong>sentiment classification</strong>, and <strong>tokenisation</strong>. Every demo is wired to the FastAPI backend at <code>/api/*</code>. Open <a href="/api/docs" target="_blank" style="color:var(--accent)">/api/docs</a> to see the full OpenAPI schema.
+    </p>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-tab="rag">01 · RAG</button>
+    <button class="tab" data-tab="embed">02 · Embeddings</button>
+    <button class="tab" data-tab="sentiment">03 · Sentiment</button>
+    <button class="tab" data-tab="token">04 · Tokens</button>
+  </div>
+
+  <!-- ── DEMO 1 · RAG ──────────────────────────────────────── -->
+  <section class="demo active" id="demo-rag">
+    <div class="demo-head">
+      <div class="num">// demo 01 — Retrieval-Augmented Generation</div>
+      <h2>Ask Pragna AI</h2>
+      <p>Type a question. The backend embeds it, retrieves the most-similar CV chunks, stitches them into the prompt, and streams an answer back. Citations are shown <em>before</em> the answer so you can see what the LLM was grounded on.</p>
+    </div>
+
+    <div class="panel">
+      <h3>// query</h3>
+      <label for="rag-q">your question</label>
+      <textarea id="rag-q" class="large" placeholder="e.g. What AI projects has Pragna shipped? Has she worked with PostgreSQL? What awards has she won?">What AI-related work has Pragna done?</textarea>
+      <div class="controls">
+        <button class="btn btn-primary" id="rag-go">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          Run RAG
+        </button>
+        <button class="btn" id="rag-preview">Retrieve only (skip LLM)</button>
+      </div>
+      <div class="note">Retrieval uses cosine similarity over <b>sentence-transformers</b> embeddings (or a hash fallback in restricted environments).</div>
+    </div>
+
+    <div class="panel">
+      <h3>// retrieved chunks</h3>
+      <div id="rag-hits" class="hits"><div class="empty">No retrieval yet — run a query above.</div></div>
+    </div>
+
+    <div class="panel">
+      <h3>// generated answer</h3>
+      <div id="rag-answer" class="answer-box"><em>The LLM's response will stream in here…</em></div>
+    </div>
+
+    <div class="learn">
+      <h4>// what just happened</h4>
+      <ol>
+        <li><b>Chunk.</b> The CV is split into semantic units at <code>## CHUNK:</code> markers — see <code>data/knowledge_base.md</code>.</li>
+        <li><b>Embed.</b> Each chunk + your query becomes a 384-dim vector via <code>sentence-transformers/all-MiniLM-L6-v2</code>.</li>
+        <li><b>Retrieve.</b> Cosine similarity ranks chunks; top-k goes into the prompt.</li>
+        <li><b>Augment + Generate.</b> A system prompt instructs the LLM to answer <em>only</em> from context — that's what makes RAG faithful instead of hallucinatory.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ── DEMO 2 · EMBEDDINGS ───────────────────────────────── -->
+  <section class="demo" id="demo-embed">
+    <div class="demo-head">
+      <div class="num">// demo 02 — Vector embeddings</div>
+      <h2>How similar are two strings?</h2>
+      <p>Embeddings turn text into a high-dimensional vector. Similar meanings → vectors close together. Cosine similarity captures the angle between them: <code>1.0</code> = identical direction, <code>0.0</code> = orthogonal, <code>-1.0</code> = opposite.</p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-row">
+        <div>
+          <label for="emb-a">text A</label>
+          <textarea id="emb-a" class="large">a developer pivoting into machine learning</textarea>
+        </div>
+        <div>
+          <label for="emb-b">text B</label>
+          <textarea id="emb-b" class="large">an engineer learning AI</textarea>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="btn btn-primary" id="emb-go">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12h6l3-6 3 12 3-6h3"/></svg>
+          Compute similarity
+        </button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>// result</h3>
+      <div id="emb-out">
+        <div class="empty">Run the demo to see vector similarity.</div>
+      </div>
+    </div>
+
+    <div class="learn">
+      <h4>// the intuition</h4>
+      <p>Modern LLMs operate on embeddings under the hood — every token, every chunk, every search query becomes a vector. <b>RAG is just embedding similarity at scale.</b> Try synonyms, antonyms, or text in different languages and watch the score change.</p>
+    </div>
+  </section>
+
+  <!-- ── DEMO 3 · SENTIMENT ────────────────────────────────── -->
+  <section class="demo" id="demo-sentiment">
+    <div class="demo-head">
+      <div class="num">// demo 03 — Sentiment classification</div>
+      <h2>Positive or negative?</h2>
+      <p>A classic NLP task. The backend uses <code>distilbert-base-uncased-finetuned-sst-2-english</code> from Hugging Face when transformers is installed, and a tiny lexicon classifier as a fallback so the demo always responds.</p>
+    </div>
+
+    <div class="panel">
+      <label for="sent-text">text</label>
+      <textarea id="sent-text" class="large">I had an absolutely wonderful time at the conference and learned so much about AI.</textarea>
+      <div class="controls">
+        <button class="btn btn-primary" id="sent-go">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg>
+          Classify sentiment
+        </button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>// result</h3>
+      <div id="sent-out"><div class="empty">No classification yet.</div></div>
+    </div>
+  </section>
+
+  <!-- ── DEMO 4 · TOKENS ───────────────────────────────────── -->
+  <section class="demo" id="demo-token">
+    <div class="demo-head">
+      <div class="num">// demo 04 — Tokenisation</div>
+      <h2>How LLMs see your text</h2>
+      <p>LLMs don't read characters — they read <em>tokens</em>. Each token costs money in API calls and dictates how prompts fit in the context window. Below is a word-level split plus a coarse byte-pair-encoding-style split for comparison.</p>
+    </div>
+
+    <div class="panel">
+      <label for="tok-text">text</label>
+      <textarea id="tok-text" class="large">Retrieval-augmented generation grounds language models in trustworthy context.</textarea>
+      <div class="controls">
+        <button class="btn btn-primary" id="tok-go">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+          Tokenise
+        </button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>// stats</h3>
+      <div id="tok-stats"><div class="empty">Run the demo above.</div></div>
+    </div>
+
+    <div class="panel">
+      <h3>// word tokens</h3>
+      <div id="tok-words"><div class="empty">—</div></div>
+    </div>
+
+    <div class="panel">
+      <h3>// byte-pair-style split (illustrative)</h3>
+      <div id="tok-bpe"><div class="empty">—</div></div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="container">
+    <p>Powered by <strong style="color:var(--text)">FastAPI</strong> · <strong style="color:var(--text)">SQLAlchemy 2.0</strong> · <strong style="color:var(--text)">sentence-transformers</strong> · <strong style="color:var(--text)">Anthropic Claude</strong></p>
+    <p style="margin-top:6px">Built by <a href="/">Pragna Urs</a> · Rostock, Germany</p>
+  </div>
+</footer>
+
+<script>
+/* ── Tabs ───────────────────────────────────────────────────── */
+const tabs = document.querySelectorAll('.tab');
+const demos = document.querySelectorAll('.demo');
+tabs.forEach(t => t.addEventListener('click', () => {
+  tabs.forEach(x => x.classList.remove('active'));
+  demos.forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+  document.getElementById('demo-' + t.dataset.tab).classList.add('active');
+}));
+
+/* ── API helper ─────────────────────────────────────────────── */
+async function api(path, body, opts = {}) {
+  const res = await fetch(path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+    ...opts,
+  });
+  if (!res.ok && !opts.stream) throw new Error(await res.text());
+  return res;
+}
+
+/* ── Health pill ─────────────────────────────────────────────── */
+(async () => {
+  const pill = document.getElementById('health-pill');
+  try {
+    const r = await fetch('/api/health');
+    if (!r.ok) throw new Error('bad status');
+    const j = await r.json();
+    pill.textContent = `● online · ${j.llm} · ${j.chunks} chunks`;
+    pill.className = 'pill green';
+  } catch {
+    pill.textContent = '● backend offline';
+    pill.className = 'pill red';
+  }
+})();
+
+/* ── Demo 1 · RAG ────────────────────────────────────────────── */
+function escapeHtml(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function renderHits(hits) {
+  const el = document.getElementById('rag-hits');
+  if (!hits.length) { el.innerHTML = '<div class="empty">No relevant chunks.</div>'; return; }
+  el.innerHTML = hits.map(h => `
+    <div class="hit">
+      <div class="head">
+        <span class="title">[${escapeHtml(h.title)}]</span>
+        <span class="score">cos = ${h.score}</span>
+      </div>
+      <div class="preview">${escapeHtml(h.preview || '')}</div>
+    </div>
+  `).join('');
+}
+
+document.getElementById('rag-preview').addEventListener('click', async () => {
+  const q = document.getElementById('rag-q').value.trim();
+  if (!q) return;
+  const res = await fetch('/api/chat/citations?query=' + encodeURIComponent(q) + '&k=4');
+  const j = await res.json();
+  renderHits(j.hits);
+  document.getElementById('rag-answer').innerHTML = '<em>(retrieve-only mode — no LLM was called)</em>';
+});
+
+document.getElementById('rag-go').addEventListener('click', async () => {
+  const btn = document.getElementById('rag-go');
+  const q = document.getElementById('rag-q').value.trim();
+  if (!q) return;
+  btn.disabled = true;
+  document.getElementById('rag-hits').innerHTML = '<div class="empty">Retrieving…</div>';
+  document.getElementById('rag-answer').innerHTML = '';
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: q, k: 4 }),
+    });
+    if (!res.ok || !res.body) throw new Error('failed');
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let answer = '';
+    const ansEl = document.getElementById('rag-answer');
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const events = buffer.split('\n\n');
+      buffer = events.pop() || '';
+      for (const evt of events) {
+        const lines = evt.split('\n');
+        const eventLine = lines.find(l => l.startsWith('event:'));
+        const dataLine  = lines.find(l => l.startsWith('data:'));
+        if (!eventLine || !dataLine) continue;
+        const event = eventLine.slice(6).trim();
+        const data  = JSON.parse(dataLine.slice(5).trim());
+        if (event === 'citations') renderHits(data.citations.map(c => ({ ...c, preview: '' })));
+        if (event === 'token') { answer += data.text; ansEl.textContent = answer; }
+        if (event === 'done')  ansEl.textContent += `\n\n— ${data.provider} · ${data.latency_ms} ms`;
+      }
+    }
+  } catch (e) {
+    document.getElementById('rag-answer').innerHTML = '<em style="color:#ff8b8b">Backend offline — start FastAPI: <code>uvicorn app.main:app</code></em>';
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+/* ── Demo 2 · EMBEDDINGS ────────────────────────────────────── */
+document.getElementById('emb-go').addEventListener('click', async () => {
+  const a = document.getElementById('emb-a').value.trim();
+  const b = document.getElementById('emb-b').value.trim();
+  if (!a || !b) return;
+  const out = document.getElementById('emb-out');
+  out.innerHTML = '<div class="empty">Computing…</div>';
+  try {
+    const res = await api('/api/demo/embed', { a, b });
+    const j = await res.json();
+    const pct = Math.round(((j.similarity + 1) / 2) * 100);  // [-1,1] → [0,100]
+    out.innerHTML = `
+      <div class="kv">
+        <div class="k">cosine similarity</div><div class="v acc">${j.similarity}</div>
+        <div class="k">vector dim</div><div class="v">${j.dim}</div>
+        <div class="k">latency</div><div class="v">${j.latency_ms} ms</div>
+      </div>
+      <div class="bar"><span style="width:${pct}%"></span></div>
+      <div class="note">first 8 components of vector A:</div>
+      <div class="code">${JSON.stringify(j.vector_a_preview)}</div>
+      <div class="note">first 8 components of vector B:</div>
+      <div class="code">${JSON.stringify(j.vector_b_preview)}</div>
+    `;
+  } catch (e) {
+    out.innerHTML = '<em style="color:#ff8b8b">Backend offline.</em>';
+  }
+});
+
+/* ── Demo 3 · SENTIMENT ─────────────────────────────────────── */
+document.getElementById('sent-go').addEventListener('click', async () => {
+  const text = document.getElementById('sent-text').value.trim();
+  if (!text) return;
+  const out = document.getElementById('sent-out');
+  out.innerHTML = '<div class="empty">Classifying…</div>';
+  try {
+    const res = await api('/api/demo/sentiment', { text });
+    const j = await res.json();
+    const colour = j.label.startsWith('POS') ? 'var(--accent)' : j.label.startsWith('NEG') ? '#ff8b8b' : 'var(--text-muted)';
+    out.innerHTML = `
+      <div class="kv">
+        <div class="k">label</div><div class="v" style="color:${colour}">${j.label}</div>
+        <div class="k">confidence</div><div class="v acc">${j.score}</div>
+        <div class="k">engine</div><div class="v">${j.engine}</div>
+        <div class="k">latency</div><div class="v">${j.latency_ms} ms</div>
+      </div>
+      <div class="bar"><span style="width:${Math.round(j.score * 100)}%"></span></div>
+    `;
+  } catch (e) {
+    out.innerHTML = '<em style="color:#ff8b8b">Backend offline.</em>';
+  }
+});
+
+/* ── Demo 4 · TOKENS ────────────────────────────────────────── */
+document.getElementById('tok-go').addEventListener('click', async () => {
+  const text = document.getElementById('tok-text').value.trim();
+  if (!text) return;
+  const stats = document.getElementById('tok-stats');
+  const words = document.getElementById('tok-words');
+  const bpe   = document.getElementById('tok-bpe');
+  stats.innerHTML = '<div class="empty">Tokenising…</div>';
+  try {
+    const res = await api('/api/demo/tokenise', { text });
+    const j = await res.json();
+    stats.innerHTML = `
+      <div class="kv">
+        <div class="k">chars</div><div class="v">${j.char_count}</div>
+        <div class="k">words</div><div class="v">${j.word_count}</div>
+        <div class="k">≈ tokens</div><div class="v acc">${j.approx_tokens}</div>
+      </div>
+    `;
+    words.innerHTML = j.words.map(w => `<span class="token w">${escapeHtml(w)}</span>`).join('');
+    bpe.innerHTML   = j.bpe_like.map(w => `<span class="token b">${escapeHtml(w)}</span>`).join('');
+  } catch (e) {
+    stats.innerHTML = '<em style="color:#ff8b8b">Backend offline.</em>';
+  }
+});
+</script>
+</body>
+</html>

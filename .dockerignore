@@ -1,0 +1,32 @@
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+.venv
+venv/
+env/
+*.egg-info
+.pytest_cache
+.mypy_cache
+.ruff_cache
+
+# Local files
+.env
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE / OS
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Docs
+README.md
