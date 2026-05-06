@@ -24,13 +24,13 @@ FROM python:3.12-slim AS runtime
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PATH=/root/.local/bin:$PATH
+    PATH=/home/app/.local/bin:$PATH
 
 # non-root user for safer deployment (HF Spaces compatible)
 RUN useradd -m -u 1000 app
 WORKDIR /home/app
 
-COPY --from=builder /root/.local /root/.local
+COPY --from=builder /root/.local /home/app/.local
 COPY --chown=app:app . .
 
 # Make entrypoint executable
