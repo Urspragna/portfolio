@@ -33,6 +33,9 @@ WORKDIR /home/app
 COPY --from=builder /root/.local /root/.local
 COPY --chown=app:app . .
 
+# Make entrypoint executable
+RUN chmod +x /home/app/entrypoint.sh
+
 EXPOSE 8000
 
 USER app
@@ -41,4 +44,4 @@ USER app
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
   CMD python -c "import httpx, sys, os; port = os.getenv('PORT', '8000'); sys.exit(0 if httpx.get(f'http://localhost:{port}/api/health').status_code == 200 else 1)"
 
-CMD ["python", "-c", "import os, subprocess; port = os.getenv('PORT', '8000'); subprocess.run(['uvicorn', 'app.main:app', '--host', '0.0.0.0', '--port', port])"]
+ENTRYPOINT ["/home/app/entrypoint.sh"]
