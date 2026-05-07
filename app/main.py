@@ -1,11 +1,4 @@
-"""FastAPI entry point — wires the whole app together.
-
-Run locally:
-    uvicorn app.main:app --reload
-
-Or with the included Docker setup:
-    docker compose up
-"""
+"""FastAPI app entry point."""
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
@@ -29,28 +22,20 @@ settings = get_settings()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Startup / shutdown lifecycle.
-
-    On startup:
-      • create DB tables (idempotent)
-      • build the RAG index from the knowledge base
-      • instantiate the configured LLM provider
-    """
+    """Init DB, load RAG index, set up LLM."""
     print(f"[{settings.app_name}] starting up — env={settings.environment}")
 
-    # DB init is best-effort: a failure here disables analytics logging but
-    # never blocks the chatbot or AI demos from running.
+    # DB init is best-effort; if it fails, chat still works.
     db_ok = True
     try:
         await init_db()
     except Exception as exc:  # pragma: no cover
         db_ok = False
         print(
-            f"[db] init failed ({type(exc).__name__}: {exc}). "
-            "Continuing without persistence — chat history won't be logged."
+            f"[db] init failed ({type(exc).__name__}: {exc}). Chat works; logging disabled."
         )
 
-    # RAG index — built once, reused across requests
+    # Build RAG index once at startup
     index = load_index(settings)
     embedder = Embedder(settings)
     llm = make_llm(settings)
@@ -84,7 +69,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# ─── Middleware ─────────────────────────────────────────────────────────
+# Middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
@@ -94,10 +79,10 @@ app.add_middleware(
 )
 
 
-# ─── Health ─────────────────────────────────────────────────────────────
+# Health check
 @app.get("/api/health", tags=["meta"])
 async def health() -> dict:
-    """Liveness + tiny status payload for the frontend banner."""
+    """Health check with status."""
     return {
         "ok": True,
         "version": __version__,
@@ -109,14 +94,12 @@ async def health() -> dict:
     }
 
 
-# ─── Routers ────────────────────────────────────────────────────────────
+# Routers
 app.include_router(chat_router)
 app.include_router(demos_router)
 
 
-# ─── Static frontend ────────────────────────────────────────────────────
-# Serve index.html, lab.html, the CV PDF, and any other static asset placed
-# in the project root. Defined routes (/api/*) take precedence over this mount.
+# Static frontend (serves HTML/assets; /api/* routes take precedence)
 PUBLIC = Path(settings.public_dir)
 INDEX_FILE = PUBLIC / "index.html"
 LAB_FILE = PUBLIC / "lab.html"
@@ -134,7 +117,6 @@ if INDEX_FILE.exists():
         if not LAB_FILE.exists():
             return JSONResponse({"detail": "lab.html not found"}, status_code=404)
         return FileResponse(LAB_FILE)
-        return FileResponse(target)
 
-    # All remaining static files (CV PDF, future assets)
+    # Serve other static files
     app.mount("/", StaticFiles(directory=str(PUBLIC), html=True), name="static")

@@ -1,14 +1,4 @@
-"""LLM provider abstraction.
-
-Three providers are wired up — pick via `LLM_PROVIDER` env var:
-
-  • anthropic — frontier quality, requires ANTHROPIC_API_KEY (paid)
-  • ollama    — local LLM via `ollama serve` (free, private)
-  • echo      — deterministic stub that just echoes the retrieved context;
-                lets the chatbot work *without any LLM keys at all* — perfect
-                for first-time visitors and for portfolio reviewers who
-                don't want to spin up an API key.
-"""
+"""LLM provider abstraction: anthropic, ollama, or echo."""
 from __future__ import annotations
 
 from typing import AsyncIterator, Protocol
@@ -25,22 +15,15 @@ class LLM(Protocol):
         ...
 
 
-# ────────────────────────────────────────────────────────────────────────
-# Echo (no-key deterministic stub)
-# ────────────────────────────────────────────────────────────────────────
-
+# Echo provider (no API key)
 
 class EchoLLM:
-    """Returns a structured answer assembled directly from retrieved context.
-
-    This makes the RAG demo work *out-of-the-box* — even with no API key —
-    while still showing the retrieval layer in action.
-    """
+    """Echo back the retrieved context. Works without any API key."""
 
     name = "echo"
 
     async def stream(self, prompt: str) -> AsyncIterator[str]:
-        # Extract context block + question from the rendered prompt
+        # Extract context and question from the prompt
         ctx = ""
         question = ""
         if "Context passages:" in prompt and "Question:" in prompt:
@@ -48,29 +31,20 @@ class EchoLLM:
             ctx_part, q_part = after.split("Question:", 1)
             ctx = ctx_part.strip().strip("-").strip()
             question = q_part.split("Answer:")[0].strip()
+        # FIXME: this parsing is a bit fragile, should use regex or structured format
 
-        intro = (
-            "Based on Pragna's portfolio knowledge base, here's what's "
-            f"relevant to *{question or 'your question'}*:\n\n"
-        )
+        intro = f"Based on my portfolio: here's what's relevant to {question or 'your question'}:\n\n"
         yield intro
 
-        # Yield the context as the answer body — nothing invented.
         body = ctx[:1400] if ctx else "(no relevant context found)"
-        # stream in small chunks for nicer UX
+        # Stream in small chunks for better UX
         for i in range(0, len(body), 60):
             yield body[i : i + 60]
 
-        yield (
-            "\n\n— *Echo provider (no LLM key set). Add ANTHROPIC_API_KEY or run "
-            "`ollama serve` to enable a real LLM response.*"
-        )
+        yield "\n\n— Echo provider (no LLM key). Set ANTHROPIC_API_KEY or run `ollama serve` for real responses."
 
 
-# ────────────────────────────────────────────────────────────────────────
 # Anthropic Claude
-# ────────────────────────────────────────────────────────────────────────
-
 
 class AnthropicLLM:
     name = "anthropic"
@@ -109,9 +83,9 @@ class AnthropicLLM:
                         break
                     try:
                         import json
-
                         evt = json.loads(raw)
                     except json.JSONDecodeError:
+                        # TODO: log these parse errors somewhere
                         continue
                     if evt.get("type") == "content_block_delta":
                         delta = evt.get("delta", {})
@@ -119,10 +93,7 @@ class AnthropicLLM:
                             yield delta.get("text", "")
 
 
-# ────────────────────────────────────────────────────────────────────────
 # Ollama (local LLM)
-# ────────────────────────────────────────────────────────────────────────
-
 
 class OllamaLLM:
     name = "ollama"
@@ -153,10 +124,7 @@ class OllamaLLM:
                         break
 
 
-# ────────────────────────────────────────────────────────────────────────
 # Factory
-# ────────────────────────────────────────────────────────────────────────
-
 
 def make_llm(settings: Settings | None = None) -> LLM:
     settings = settings or get_settings()

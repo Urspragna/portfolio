@@ -1,4 +1,4 @@
-"""POST /api/chat — RAG-grounded streaming chatbot."""
+"""POST /api/chat — RAG chatbot (streaming SSE)."""
 from __future__ import annotations
 
 import json
@@ -18,15 +18,17 @@ router = APIRouter(prefix="/api", tags=["chat"])
 class ChatRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=2000)
     k: int = Field(default=4, ge=1, le=8, description="Number of chunks to retrieve")
+    # TODO: add optional session_id for tracking conversations
 
 
 async def _try_log_conversation(**fields) -> None:
-    """Best-effort persistence — never raise to the caller."""
+    """Best-effort logging; never raises."""
     try:
         async with SessionLocal() as s:
             s.add(Conversation(**fields))
             await s.commit()
     except Exception as exc:  # pragma: no cover
+        # Silently fail on logging — shouldn't break chat
         print(f"[chat] log skipped: {type(exc).__name__}: {exc}")
 
 
@@ -35,11 +37,7 @@ async def chat(
     body: ChatRequest,
     request: Request,
 ) -> StreamingResponse:
-    """Stream a RAG-grounded answer.
-
-    The response is server-sent events (SSE) so the frontend gets tokens as
-    they arrive — exactly like ChatGPT / Claude.
-    """
+    """Stream a RAG-grounded answer (SSE)."""
     index: RAGIndex = request.app.state.rag_index
     llm = request.app.state.llm
 
@@ -54,7 +52,7 @@ async def chat(
 
     async def event_stream() -> AsyncIterator[bytes]:
         t0 = time.perf_counter()
-        # First event: citations (so the UI can show retrieval before the LLM speaks)
+        # Citations first, so UI shows retrieval before LLM starts
         yield _sse("citations", {"citations": citations})
 
         chunks: list[str] = []
@@ -65,7 +63,8 @@ async def chat(
         latency_ms = int((time.perf_counter() - t0) * 1000)
         full_answer = "".join(chunks)
 
-        # Persist the turn (anonymously) — best-effort, never blocks the response
+        # Log the turn (anonymously, best-effort)
+        # FIXME: should maybe truncate really long answers before storing
         await _try_log_conversation(
             question=body.message,
             answer=full_answer[:8000],
@@ -86,7 +85,7 @@ def _sse(event: str, data: dict) -> bytes:
 
 @router.get("/chat/citations")
 async def preview_citations(query: str, request: Request, k: int = 4) -> dict:
-    """Pure-retrieval endpoint (no LLM call) — handy for the lab page demo."""
+    """Retrieval only (no LLM)."""
     index: RAGIndex = request.app.state.rag_index
     hits = index.retrieve(query, k=k)
     return {
