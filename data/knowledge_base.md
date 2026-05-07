@@ -7,94 +7,92 @@
 ---
 
 ## CHUNK: Who I am, in my own voice
-I'm Pragna. I'm a software engineer who cares about shipping things that don't break in production. I spent four-and-a-half years building enterprise web apps — banking, retail, energy, telecom — and the through-line is the same: the moment something has to actually work for real users at scale, I get more interested. Now I'm in Rostock doing an M.Sc., pulling that same instinct into AI. The model is the headline; the platform around it is what makes the headline real.
+I'm Pragna. Software engineer. I care about shipping things that work in production. Spent 4.5 years building web platforms for banks, retailers, and telecom — the kind of systems where downtime costs money. Now I'm in Rostock doing an M.Sc., pulling that same instinct into AI. The model is the interesting part. The platform around it is what makes it real.
 
 ---
 
 ## CHUNK: How I think about the AI pivot — the honest version
-I didn't wake up one day and decide to "switch into AI." I kept noticing that everywhere I'd worked — fintech, retail telemetry, diagnostics streaming — the same problems kept showing up that ML teams now face at production scale: auth, observability, RBAC, regulatory rigour, CI/CD discipline, real-time data. Most production AI systems don't fail at the model layer; they fail at *those* layers. So my pivot is less "career change" and more "applying everything I already know to the layer where it's currently missing."
+I didn't decide to "switch into AI." I kept noticing the same problems everywhere I worked — fintech, retail telemetry, diagnostics streaming. Auth. Observability. RBAC. Real-time data. Most production AI systems don't fail at the model layer. They fail at those layers. So this pivot is less "career change" and more "applying what I already know to the part of the system that's broken."
 
 ---
 
 ## CHUNK: What I'm working on this week
-Two things, deep:
+Two things.
 
-The first is the **User Management module of a web-based AlphaFold platform** at Universität Rostock. Researchers run protein-structure predictions; my job is the auth, the admin tooling, and a real-time task dashboard so they can see if their predictions are still running.
+First: the User Management module of a web-based AlphaFold platform at Universität Rostock. Researchers run protein-structure predictions; I built the auth, admin tooling, and a dashboard so they can see if their predictions are still running.
 
-The second is the chatbot you're talking to right now. I wrote the RAG pipeline from scratch — no LangChain, no LlamaIndex — so I could see every step in plain Python. The fact that it's answering you is itself the demo. Reading `app/rag.py` end-to-end takes about five minutes and you'll understand 80% of how production RAG works.
+Second: the chatbot you're talking to right now. I wrote the RAG pipeline from scratch — no LangChain, no LlamaIndex — so I could actually understand what's happening. Read `app/rag.py` and you'll get how production RAG works.
 
 ---
 
 ## CHUNK: My take on RAG vs fine-tuning
-Most teams reach for fine-tuning when RAG would solve the actual problem. Fine-tuning is expensive, it drifts, and it locks you into one model. RAG is cheap, updatable instantly (edit a markdown file, restart), and lets you swap LLMs as better ones come out. Fine-tune when you need a *style* the base model can't produce, or for narrow internal jargon. Use RAG for everything else — including this portfolio.
+Most teams reach for fine-tuning when RAG would solve the problem. Fine-tuning is expensive, it drifts, and it locks you in. RAG is cheap, updatable instantly (edit a file, restart), and you can swap LLMs. Fine-tune when you need a specific style the base model can't do. Use RAG for everything else.
 
 ---
 
 ## CHUNK: My engineering philosophy
-A few things I've come to believe after 4.5 years in production:
+Boring things decide whether software survives: logging, RBAC, tests, code review, CI/CD.
 
-The boring parts — logging, RBAC, CI/CD, code review, tests — are the parts that decide whether a system survives contact with reality.
+Code review is the highest-leverage thing I do.
 
-Code reviews are the highest-leverage thing I do, both giving and receiving them.
+I ship the simple version this week instead of the perfect version in three months.
 
-I'd rather ship the simple version this week than the perfect version in three months.
+Documentation is code for humans.
 
-Documentation is just code for humans.
-
-And: most "AI" production failures are actually ordinary software failures wearing a costume.
+Most "AI" production failures are actually ordinary software failures wearing a costume.
 
 ---
 
 ## CHUNK: A story from Bank of America
-The fraud-detection win at BoA wasn't one dramatic moment — it was a year of slow integration. The hard part wasn't the JWT plumbing or the Glassbox SDK; it was convincing four teams that *real-time* event capture was worth the latency budget. We A/B-tested for three weeks, surfaced a cluster of session-replay anomalies that turned out to be a credential-stuffing pattern, and that one find paid for the whole project. The lesson I took away: telemetry isn't a feature. It's an investigation tool.
+Built a fraud-detection integration. The hard part wasn't the JWT plumbing. It was convincing four teams that real-time event capture was worth the latency cost. We A/B-tested, found a credential-stuffing pattern through the telemetry, and that one find paid for the whole project. Lesson: telemetry isn't a feature. It's an investigation tool.
 
 ---
 
 ## CHUNK: A story from Ross Stores
-We were five teams owning five modules in a single Angular shell. Before micro-frontends, we shipped together — meaning when one team had a bug, we all waited. After: five independent release cadences. The technical split was the easy part (Webpack Module Federation is well-documented). The hard part was the *contract negotiations* between teams about what counted as a breaking change. The lesson I took away: micro-anything is more about org boundaries than code boundaries.
+Five teams owned five modules in one Angular shell. Before micro-frontends, we shipped together — meaning one bug blocked everyone. After Module Federation, five independent release cadences. The technical part was easy. The hard part was team contracts: what counts as breaking? Lesson: micro-anything is more about org boundaries than code.
 
 ---
 
 ## CHUNK: A story from the AlphaFold platform
-The first time my User Management dashboard showed real data — a researcher's running tasks updating live, the lockout-with-countdown feature catching a misconfigured auth client — was the most "production engineering meets science" moment I've had. AlphaFold is Nobel-Prize-winning AI. But the people *using* it just need login that works, an admin who can reset things, and a way to see if their job is still running. I built that. There's something deeply satisfying about putting boring software underneath important science.
+First time the dashboard showed real data — live task updates, lockout-with-countdown catching a bad auth client — felt like production engineering meets science. AlphaFold won a Nobel Prize. But researchers just need login that works, an admin who can fix things, and a way to see if the job is running. I built that. There's something satisfying about boring software underneath important science.
 
 ---
 
 ## CHUNK: Books and papers I'm reading right now
-- *Designing Machine Learning Systems* by Chip Huyen — clearest book on production ML I've found.
-- *The Annotated Transformer* by Harvard NLP — re-reading every few months; every pass surfaces something new.
-- *Attention Is All You Need* — the original Transformer paper. Worth revisiting after each course module clicks.
-- The DeepMind **AlphaFold 2** paper — for obvious reasons.
-- The Pragmatic Engineer newsletter — for the *operational* side of how AI teams actually work day-to-day.
+- *Designing Machine Learning Systems* by Chip Huyen — best book on production ML I've found
+- *The Annotated Transformer* by Harvard NLP — re-reading every few months
+- *Attention Is All You Need* — the Transformer paper, worth revisiting when new ideas click
+- AlphaFold 2 paper — for obvious reasons
+- The Pragmatic Engineer newsletter — how AI teams actually work day-to-day
 
 ---
 
 ## CHUNK: My hot takes on AI in 2026
-Most "AI strategy" decks are vibes. The valuable work is unglamorous: data pipelines, eval harnesses, cost monitoring, observability.
+Most "AI strategy" decks are vibes. The real work is unglamorous: data pipelines, eval harnesses, cost tracking, observability.
 
-Vector databases get over-indexed on. For most apps, in-memory FAISS or NumPy is faster and simpler until you have millions of chunks. (This portfolio's RAG runs on numpy and it's fine.)
+Vector databases get over-indexed. For most apps, in-memory FAISS or NumPy is faster and simpler until you have millions of chunks.
 
-Prompt engineering is real engineering — version it, test it, regression-test it.
+Prompt engineering is real engineering — version it, test it, catch regressions.
 
-The teams shipping production AI are the ones treating LLMs as APIs, not as research projects.
+The teams shipping production AI treat LLMs like APIs, not research projects.
 
-Open-source models will keep eating the long tail. The question isn't "will Llama catch up to GPT" — it's "what's good enough for *my* problem".
+Open-source models will keep eating the long tail.
 
 ---
 
 ## CHUNK: Why Rostock?
 Three reasons.
 
-The M.Sc. CS International track is taught in English with deep AI / intelligent-systems coursework — it's a real pivot opportunity, not just a name change on my LinkedIn.
+The M.Sc. is taught in English with real AI coursework — not just a LinkedIn name change. Actual pivot opportunity.
 
-Rostock is on the Baltic. Water, quiet, good for thinking. Coming from Bengaluru, the silence took some adjusting.
+Rostock is on the Baltic. Quiet. Good for thinking. Coming from Bengaluru, the silence was an adjustment.
 
-Germany has a serious engineering culture and the Werkstudent / HiWi system is designed exactly for what I'm trying to do: get into industry AI work part-time alongside the degree. Rare combination of rigorous research and practical apprenticeship.
+Germany treats student work seriously: the Werkstudent / HiWi system is designed for what I want to do. Industry AI work part-time alongside the degree. Rare combo of rigorous research + practical apprenticeship.
 
 ---
 
 ## CHUNK: Learning German while doing an M.Sc.
-Brutal and good. I'm at A1, climbing. Most days my brain ends in two languages at once and I dream in neither. The technical M.Sc. happens to be in English (international track), but living here means I order coffee in German, navigate the Bürgeramt in German, make friends in German. Every week I understand a bit more, code a bit more, forget which language I just thought in. That's the deal. Ask me again in six months.
+Brutal and good. I'm at A1, climbing. Most days my brain ends in two languages and I dream in neither. The M.Sc. is in English (international track), but living here means coffee in German, navigating the Bürgeramt in German, friends in German. Every week I understand a bit more. Ask me in six months.
 
 ---
 
