@@ -1,12 +1,4 @@
-"""Live AI demos — embedding similarity, sentiment, summarisation.
-
-Endpoints are intentionally small and self-contained so each one is a
-standalone teaching example readers can study independently.
-
-  POST /api/demo/embed     — encode text, return vector + similarity
-  POST /api/demo/sentiment — sentiment analysis (HF transformers pipeline)
-  POST /api/demo/tokenise  — show how a tokeniser splits text
-"""
+"""AI demos: embeddings, sentiment, tokenisation."""
 from __future__ import annotations
 
 import time
@@ -21,7 +13,7 @@ router = APIRouter(prefix="/api/demo", tags=["demos"])
 
 
 async def _log_demo(**fields) -> None:
-    """Best-effort analytics write — never raise."""
+    """Best-effort logging; never raises."""
     try:
         async with SessionLocal() as s:
             s.add(DemoRun(**fields))
@@ -30,10 +22,7 @@ async def _log_demo(**fields) -> None:
         print(f"[demos] log skipped: {type(exc).__name__}: {exc}")
 
 
-# ────────────────────────────────────────────────────────────────────────
-# Embedding similarity
-# ────────────────────────────────────────────────────────────────────────
-
+# Embeddings
 
 class EmbedRequest(BaseModel):
     a: str = Field(..., min_length=1, max_length=1500)
@@ -45,17 +34,21 @@ async def embed_similarity(
     body: EmbedRequest,
     request: Request,
 ) -> dict:
-    """Embed two texts and return cosine similarity + a tiny vector preview.
-
-    Teaches: 'similarity' is just the angle between two high-dimensional vectors.
-    """
+    """Cosine similarity + vector preview."""
     t0 = time.perf_counter()
     embedder = request.app.state.embedder
-    vecs = embedder.encode([body.a, body.b])  # (2, D)
+    vecs = embedder.encode([body.a, body.b])
     a, b = vecs[0], vecs[1]
-    cos = float(
-        np.dot(a, b) / ((np.linalg.norm(a) * np.linalg.norm(b)) + 1e-9)
-    )
+    
+    # Compute cosine similarity
+    # Note: vectors should already be normalized if using sbert
+    a_norm = np.linalg.norm(a)
+    b_norm = np.linalg.norm(b)
+    if a_norm == 0 or b_norm == 0:
+        cos = 0.0  # Handle edge case, though rare
+    else:
+        cos = float(np.dot(a, b) / (a_norm * b_norm))
+    
     latency_ms = int((time.perf_counter() - t0) * 1000)
 
     await _log_demo(demo="embed", input_excerpt=body.a[:140], latency_ms=latency_ms)
@@ -71,16 +64,13 @@ async def embed_similarity(
     }
 
 
-# ────────────────────────────────────────────────────────────────────────
-# Sentiment (lazy-loaded HF pipeline)
-# ────────────────────────────────────────────────────────────────────────
-
+# Sentiment (lazy-loaded)
 
 class SentimentRequest(BaseModel):
     text: str = Field(..., min_length=1, max_length=1500)
 
 
-_SENTIMENT_PIPELINE = None  # lazily initialised on first call
+_SENTIMENT_PIPELINE = None
 
 
 def _get_sentiment():
@@ -90,7 +80,7 @@ def _get_sentiment():
         return _SENTIMENT_PIPELINE
     try:
         from transformers import pipeline  # type: ignore
-
+        # Note: first load can take a while (~2s), might want to do this on startup
         _SENTIMENT_PIPELINE = pipeline(
             "sentiment-analysis",
             model="distilbert-base-uncased-finetuned-sst-2-english",
@@ -119,7 +109,8 @@ async def sentiment(
     pipe = _get_sentiment()
 
     if pipe == "fallback":
-        toks = [w for w in body.text.lower().split() if w]
+        # Simple lexicon-based fallback
+        toks = [w.strip(".,!?;:") for w in body.text.lower().split() if w]
         pos = sum(t in _POS for t in toks)
         neg = sum(t in _NEG for t in toks)
         if pos == neg:
@@ -131,7 +122,7 @@ async def sentiment(
     else:
         result = pipe(body.text[:512])[0]
         out = {
-            "label": result["label"],
+            "label": result["label"].upper(),
             "score": round(float(result["score"]), 4),
             "engine": "distilbert-sst2",
         }
@@ -143,10 +134,7 @@ async def sentiment(
     return out
 
 
-# ────────────────────────────────────────────────────────────────────────
-# Tokeniser visualiser
-# ────────────────────────────────────────────────────────────────────────
-
+# ─── Tokeniser visualiser ─────────────────────────────
 
 class TokeniseRequest(BaseModel):
     text: str = Field(..., min_length=1, max_length=2000)
@@ -154,26 +142,25 @@ class TokeniseRequest(BaseModel):
 
 @router.post("/tokenise")
 async def tokenise(body: TokeniseRequest) -> dict:
-    """Return a simple whitespace + sub-word tokenisation for visualisation.
-
-    Teaches: LLMs see *tokens*, not characters. Tokens cost money and dictate
-    how prompts are framed. We return both word-level and a coarse byte-pair
-    illustrative split so users can compare.
-    """
+    """Return a simple whitespace + sub-word tokenisation for visualisation."""
     text = body.text
     words = text.split()
+    
     # Illustrative BPE-style split: break long tokens into 4-char pieces
+    # TODO: this is super naive, real BPE is way more sophisticated
     bpe_like: list[str] = []
     for w in words:
         if len(w) <= 5:
             bpe_like.append(w)
         else:
             for i in range(0, len(w), 4):
-                bpe_like.append(("##" if i else "") + w[i : i + 4])
+                piece = ("##" if i else "") + w[i : i + 4]
+                bpe_like.append(piece)
+    
     return {
         "char_count": len(text),
         "word_count": len(words),
-        "approx_tokens": max(1, int(len(text) / 4)),  # ~4 chars/token rule of thumb
+        "approx_tokens": max(1, int(len(text) / 4)),
         "words": words[:200],
         "bpe_like": bpe_like[:300],
     }

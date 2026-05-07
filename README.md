@@ -1,8 +1,8 @@
 # Pragna's AI Portfolio
 
-A portfolio website that's also a working AI engineering project. The frontend is a dark, terminal-inspired single-page site; the backend is a FastAPI app that runs **RAG over Pragna's CV** and ships **four live ML demos** — embeddings, RAG retrieval, sentiment, and tokenisation. Built with the canonical Python AI stack of 2026.
+A portfolio website with a working AI backend. FastAPI + RAG chatbot (grounded on CV) + 4 live ML demos (embeddings, retrieval, sentiment, tokenisation). No frameworks — hand-written frontend, from-scratch RAG.
 
-> Two sites in one: the **portfolio** at `/` showcases who Pragna is, while the **AI Lab** at `/lab` shows what she can *build*. The whole project doubles as a teaching repo — every step in the RAG pipeline is implemented from scratch in clear, readable Python.
+Portfolio at `/` · AI Lab demos at `/lab`
 
 ---
 
@@ -57,168 +57,111 @@ Portfolio/
 
 ---
 
-## Quickstart (local, 60 seconds)
+## Quick Start
 
 ```bash
-# 1. Install
 pip install -r requirements.txt
-
-# 2. Run
 uvicorn app.main:app --reload
-
-# 3. Open
-#    http://localhost:8000        ← portfolio (with chat widget)
-#    http://localhost:8000/lab    ← AI Learning Lab
-#    http://localhost:8000/docs   ← interactive API docs (Swagger UI)
 ```
 
-That's it. SQLite is created in the project root; the RAG index is built on startup; the chatbot uses the **echo** provider (no LLM key needed) and answers from retrieved context only.
+Then visit `http://localhost:8000` (portfolio + chat) or `http://localhost:8000/lab` (demos).
+
+SQLite + RAG index build on startup. Default chatbot is **echo** (no API key needed).
 
 ### Use a real LLM
 
-**Option A — Anthropic Claude** (recommended quality):
-
+**Claude** (recommended):
 ```bash
 cp .env.example .env
-# edit .env:
-#   LLM_PROVIDER=anthropic
-#   ANTHROPIC_API_KEY=sk-ant-...
+# set LLM_PROVIDER=anthropic and ANTHROPIC_API_KEY=sk-ant-...
 uvicorn app.main:app --reload
 ```
 
-**Option B — Ollama** (local, free, private):
-
+**Ollama** (local, free):
 ```bash
-# https://ollama.com — install once, then:
-ollama pull llama3.2
-ollama serve
-
-# .env:
-#   LLM_PROVIDER=ollama
+ollama pull llama3.2 && ollama serve
+# .env: LLM_PROVIDER=ollama
 uvicorn app.main:app --reload
 ```
 
 ---
 
-## Production stack (Docker + Postgres + pgvector)
+## Production (Docker + Postgres)
 
 ```bash
-cp .env.example .env  # set ANTHROPIC_API_KEY here
-docker compose up --build
+cp .env.example .env && docker compose up --build
 ```
 
-This brings up:
-- **api** — the FastAPI app on `:8000`
-- **db** — Postgres 16 with the pgvector extension on `:5432`
-
-Switch the embedder to use pgvector by editing `app/rag.py` to upsert chunk vectors into a `chunks` table with a `vector(384)` column — that swap is the only code change needed to scale.
+Brings up FastAPI on `:8000` and Postgres+pgvector on `:5432`. To use pgvector for storage instead of in-memory vectors, edit `app/rag.py` to write/read from a `vector(384)` column.
 
 ---
 
-## Deploy options
+## Deploy
 
-| Platform | Steps | Best for |
-|---|---|---|
-| **Hugging Face Spaces** (free) | New Space → Docker → push this repo → set `ANTHROPIC_API_KEY` secret | AI portfolios — the audience already lives on HF |
-| **Railway** ($5/mo) | `railway init` → connect repo → add PostgreSQL plugin → deploy | One-click prod database |
-| **Fly.io** (free tier) | `fly launch` → `fly postgres create` → `fly deploy` | Edge regions, generous free tier |
-| **Render** (free tier) | New Web Service → Docker → connect repo → add managed Postgres | Easy GitHub-driven deploys |
-| **Local** | `uvicorn app.main:app` | Demos, dev, no internet required |
-
-For Hugging Face Spaces, the included `Dockerfile` runs as a non-root user on port 7860 if you set `EXPOSE 7860` and pass `--port 7860` — adjust the `CMD` line if needed.
+| Platform | Note |
+|---|---|
+| **Hugging Face Spaces** | New Space → Docker → set `ANTHROPIC_API_KEY` secret |
+| **Railway** | `railway init` + PostgreSQL plugin |
+| **Fly.io** | `fly launch` + `fly postgres create` |
+| **Render** | Web Service + managed Postgres |
 
 ---
 
-## How the AI works (the part Pragna built to learn)
+## How it works
 
-The `/api/chat` endpoint is **a from-scratch RAG pipeline** — no LangChain, no LlamaIndex. Reading `app/rag.py` end-to-end takes about 5 minutes and walks you through the entire concept.
+From-scratch RAG pipeline in `app/rag.py` (no LangChain, no LlamaIndex). The flow:
 
-```
-Question
-   │
-   ▼
-[1] Embed query              ── sentence-transformers → 384-dim vector
-   │
-   ▼
-[2] Cosine similarity         ── vs. all CV chunk vectors
-   │
-   ▼
-[3] Top-k retrieval           ── default k=4 → most relevant CV passages
-   │
-   ▼
-[4] Prompt assembly           ── system prompt + retrieved context + question
-   │
-   ▼
-[5] LLM stream                ── Claude / Ollama / echo emits tokens
-   │
-   ▼
-SSE stream → frontend → typewriter UI
-```
+1. Embed query → 384-dim vector (sentence-transformers)
+2. Cosine similarity search vs. CV chunks
+3. Top-k retrieval (default k=4)
+4. Build prompt with context + question
+5. Stream response via LLM
 
-Every step is observable from the **AI Lab** at `/lab`:
-
-1. **RAG demo** — type a query, watch retrieval happen, then see the LLM stream a grounded answer.
-2. **Embeddings demo** — paste two strings, see their cosine similarity and the first 8 components of each vector.
-3. **Sentiment demo** — DistilBERT classifier with a lexicon fallback so it works even on machines that can't download HF models.
-4. **Tokenisation demo** — visualise word vs. byte-pair-encoding-style tokens.
+The **AI Lab** at `/lab` has 4 interactive demos:
+- **RAG** — query, retrieval, LLM answer
+- **Embeddings** — vector similarity + preview
+- **Sentiment** — DistilBERT classifier (+ lexicon fallback)
+- **Tokenisation** — visualize token split
 
 ---
 
-## What to learn next (suggested AI study path)
+## Next steps
 
-The repo is intentionally a launchpad. Once it's running, the natural next experiments are:
-
-1. **Swap to pgvector**: keep the chunk vectors in Postgres instead of memory. Edit `app/rag.py` to write vectors into a `vector(384)` column at startup and replace the `np.matmul` retrieval with `ORDER BY embedding <-> query_vec LIMIT k`. *Production-shaped RAG.*
-2. **Reranking**: add a cross-encoder reranker (`cross-encoder/ms-marco-MiniLM-L-6-v2`) between retrieval and LLM. Compare answer faithfulness with/without.
-3. **Hybrid search**: layer BM25 (`rank_bm25` library) on top of dense retrieval and combine scores. Most production RAG is hybrid.
-4. **Eval harness**: write a small `pytest` that asks 20 known questions and checks the cited chunks are correct. *This is the most valuable AI engineering skill there is.*
-5. **Function calling**: extend the chatbot to call `/api/demo/embed` or `/api/demo/sentiment` mid-conversation. Teach the LLM to *use tools*.
-6. **Fine-tuning**: take the conversation logs in the `conversations` table, label them, and fine-tune a small open model. *Real MLOps.*
-7. **Observability**: wire `langfuse` or `helicone` to log every RAG turn — input, retrieved chunks, prompt, output, latency. *Necessary for any production AI app.*
+1. **Swap to pgvector** — store vectors in Postgres instead of memory
+2. **Reranking** — add cross-encoder between retrieval + LLM
+3. **Hybrid search** — combine BM25 + dense retrieval
+4. **Eval suite** — write tests for retrieval quality
+5. **Function calling** — let LLM call `/api/demo/*` endpoints
+6. **Fine-tune** — label conversations, train on custom data
+7. **Observability** — wire langfuse or helicone for logging
 
 ---
 
-## Featured personalisation
+## Personalization
 
-Edits ripple instantly. To update what the chatbot knows:
-
-```bash
-# 1. Edit data/knowledge_base.md — add/remove/edit any `## CHUNK: <title>` block
-# 2. Restart the server
-uvicorn app.main:app --reload
-```
-
-The chunker re-runs on every boot. For zero-downtime updates, add a `POST /api/admin/reindex` endpoint that calls `load_index()` and swaps `app.state.rag_index`.
+Edit `data/knowledge_base.md` (add/remove `## CHUNK:` blocks), restart server. Chunker rebuilds on each boot. For zero-downtime updates, add a `POST /api/admin/reindex` endpoint.
 
 ---
 
-## Tests (next addition)
+## Tests
 
-A starter test suite lives in `pyproject.toml` config — add `tests/test_rag.py` with `pytest-asyncio`. Useful first tests:
-- `chunk_markdown` correctly splits a fixture file
-- `RAGIndex.retrieve` returns the obvious chunk for an obvious question
-- `/api/health` returns 200 and reports >0 chunks
-- `/api/chat/citations?query=...` returns at least one hit with score > 0
-
----
-
-## What's intentionally minimal
-
-- **No frontend framework.** Everything is hand-written HTML/CSS/JS so the source is readable in any text editor.
-- **No CMS / no database migrations yet.** Start simple. Add Alembic when the schema grows.
-- **No auth on the chatbot.** Open by design — visitors should be able to ask questions instantly. Add rate-limiting (`slowapi`) before public deploy.
-- **No vector DB at first.** `numpy.matmul` against ~15 chunks is faster than any Postgres round-trip. Swap to pgvector when chunk count > a few hundred.
+Add `tests/test_rag.py` with pytest-asyncio. Useful tests:
+- `chunk_markdown` splits fixtures correctly
+- `RAGIndex.retrieve` finds expected chunks
+- `/api/health` returns 200 with chunk count
+- `/api/chat/citations` returns results with scores
 
 ---
 
-## How this was built
+## Design choices
 
-This project was developed with **Claude as a pair programmer** — used the way a senior engineer uses a fast, well-read junior: directing the work, reviewing every output, debugging when it got things wrong (Python 3.14 + greenlet was a fun one), and reading the resulting code until I understood every line.
-
-Architecture decisions, content, voice, debugging, and the knowledge base are mine. Code scaffolding and library suggestions were accelerated by Claude. I can walk through any file in this repo and explain why it's there.
-
-Using AI productively as an engineer is itself a 2026 skill — shipping this is also how I learned to do that well.
+- **No framework (frontend)** — hand-written HTML/CSS/JS, readable in any editor
+- **No migrations** — add Alembic when schema grows
+- **No auth** — open by design, add rate-limiting before public deploy
+- **In-memory vectors** — faster than DB round-trips for ~15 chunks, swap at scale
 
 ---
 
-Built with ♥ by **Pragna Urs Mysore Gopal** · Rostock, Germany · [LinkedIn](https://linkedin.com/in/pragna-urs) · [p.urs.mysore@gmail.com](mailto:p.urs.mysore@gmail.com)
+---
+
+Built by **Pragna Urs Mysore Gopal** · Rostock, Germany · [LinkedIn](https://linkedin.com/in/pragna-urs) · [p.urs.mysore@gmail.com](mailto:p.urs.mysore@gmail.com)

@@ -1,10 +1,4 @@
-"""Async SQLAlchemy 2.0 setup with typed models.
-
-Demonstrates production-grade DB engineering Pragna brings from her enterprise work:
-  - Async session lifecycle
-  - Typed Mapped[] declarations (SQLAlchemy 2.0 style)
-  - Migration-ready schema (drop-in Alembic later)
-"""
+"""Async SQLAlchemy 2.0 models."""
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -38,11 +32,7 @@ class Base(DeclarativeBase):
 
 
 class Conversation(Base):
-    """Logged chat turn for analytics and debugging.
-
-    Stored anonymously — no IP, no user identity. Just question/answer pairs
-    with the retrieval citations and latency metrics.
-    """
+    """A logged chat turn: question, answer, citations, latency."""
 
     __tablename__ = "conversations"
 
@@ -52,13 +42,14 @@ class Conversation(Base):
     )
     question: Mapped[str] = mapped_column(Text, nullable=False)
     answer: Mapped[str] = mapped_column(Text, nullable=False)
-    citations: Mapped[str] = mapped_column(Text, default="", nullable=False)  # JSON-encoded list of chunk titles
+    citations: Mapped[str] = mapped_column(Text, default="", nullable=False)  # JSON list of chunk titles
     latency_ms: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     provider: Mapped[str] = mapped_column(String(32), default="echo", nullable=False)
+    # TODO: add user_id once we implement auth
 
 
 class DemoRun(Base):
-    """One execution of an /api/demo/* endpoint — for usage analytics."""
+    """One /api/demo/* invocation."""
 
     __tablename__ = "demo_runs"
 
@@ -72,12 +63,12 @@ class DemoRun(Base):
 
 
 async def init_db() -> None:
-    """Create tables on first start (replace with Alembic for production migrations)."""
+    """Create all tables."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
 
 async def get_session() -> AsyncIterator[AsyncSession]:
-    """FastAPI dependency yielding a managed session."""
+    """FastAPI dependency: managed session."""
     async with SessionLocal() as session:
         yield session
