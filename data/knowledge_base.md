@@ -172,7 +172,7 @@ Bachelor's in Electronics & Instrumentation at JSS S&T University, India (CGPA 8
 ---
 
 ## CHUNK: AlphaFold platform — the project facts
-M.Sc. research project (NEIDI) at Universität Rostock. I own the **User Management module** of a web-based AlphaFold bioinformatics platform end-to-end:
+M.Sc. research project at Universität Rostock. I own the **User Management module** of a web-based AlphaFold bioinformatics platform end-to-end:
 
 PostgreSQL schema design → Flask REST backend → frontend UI. Auth with bcrypt, server-side session management, RBAC (Admin / Regular User). Account-security features: conditional login checks, lockout with countdown timer, automatic recovery, toggle-password visibility. Admin lifecycle tooling: enable/disable accounts, set/reset passwords, assign roles, edit profiles, multi-criteria server-side user search (role / status / last-login). Real-time per-user task dashboard (Total / Running / Finished / Failed). In-platform admin↔user messaging, eliminating dependency on external tools.
 
