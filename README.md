@@ -1,6 +1,6 @@
-# Pragna's AI Portfolio
+# Pragna's Portfolio
 
-A portfolio website with a working AI backend. FastAPI + RAG chatbot (grounded on CV) + 4 live ML demos (embeddings, retrieval, sentiment, tokenisation). No frameworks — hand-written frontend, from-scratch RAG.
+A portfolio website with a working backend. FastAPI + RAG chatbot (grounded on CV) + 4 live ML demos (embeddings, retrieval, sentiment, tokenisation). No frameworks — hand-written frontend, from-scratch RAG.
 
 Portfolio at `/` · AI Lab demos at `/lab`
 

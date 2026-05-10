@@ -7,21 +7,21 @@
 ---
 
 ## CHUNK: Who I am, in my own voice
-I'm Pragna. Software engineer. I care about shipping things that work in production. Spent 4.5 years building web platforms for banks, retailers, and telecom — the kind of systems where downtime costs money. Now I'm in Rostock doing an M.Sc., pulling that same instinct into AI. The model is the interesting part. The platform around it is what makes it real.
+I'm Pragna, a software engineer focused on reliable production systems. I spent 4.5 years building web platforms for banks, retailers, and telecom — the kind of systems where uptime and security matter. Now I'm in Rostock for an M.Sc. in Computer Science, bringing that operational mindset into model-backed tooling. The model is important; the platform around it is what makes it useful.
 
 ---
 
 ## CHUNK: How I think about the AI pivot — the honest version
-I didn't decide to "switch into AI." I kept noticing the same problems everywhere I worked — fintech, retail telemetry, diagnostics streaming. Auth. Observability. RBAC. Real-time data. Most production AI systems don't fail at the model layer. They fail at those layers. So this pivot is less "career change" and more "applying what I already know to the part of the system that's broken."
+I didn't decide to "switch into AI." I kept seeing the same problems in fintech, retail telemetry, and diagnostics streaming: auth, observability, RBAC, real-time data. Most production failures are not model failures. They are software failures. This is less a career change and more applying what I already know to the part of the system that matters.
 
 ---
 
 ## CHUNK: What I'm working on this week
-Two things.
+I’m working on two things.
 
-First: the User Management module of a web-based AlphaFold platform at Universität Rostock. Researchers run protein-structure predictions; I built the auth, admin tooling, and a dashboard so they can see if their predictions are still running.
+First: the User Management module for a web-based AlphaFold platform at Universität Rostock. Researchers run protein-structure predictions; I built the auth, admin tooling, and dashboard that keep their workflows reliable.
 
-Second: the chatbot you're talking to right now. I wrote the RAG pipeline from scratch — no LangChain, no LlamaIndex — so I could actually understand what's happening. Read `app/rag.py` and you'll get how production RAG works.
+Second: the chatbot you’re using now. I wrote the RAG pipeline from scratch — no LangChain, no LlamaIndex — so I can understand retrieval and grounding at production scale.
 
 ---
 
@@ -158,11 +158,11 @@ Fastest is email — **p.urs.mysore@gmail.com**. I read it daily and reply withi
 ---
 
 ## CHUNK: Identity, contact, current status — the factual snapshot
-**Pragna Urs Mysore Gopal.** Based in Rostock, Germany. Currently pursuing M.Sc. in Computer Science (International) at Universität Rostock, with active coursework in LLM applications and ML fundamentals. Open to **Werkstudent** (working student) and **HiWi** (research assistant) roles in Germany.
+**Pragna Urs Mysore Gopal.** Based in Rostock, Germany. Pursuing an M.Sc. in Computer Science at Universität Rostock, with coursework in LLM applications and ML fundamentals. Open to **Werkstudent** and **HiWi** roles in Germany.
 
 Contact: p.urs.mysore@gmail.com · +49 155 10585488 · linkedin.com/in/pragna-urs
 
-Languages: English C1 · German A1 (climbing) · Hindi B2 · Kannada native.
+Languages: English C1 · German A1 · Hindi B2 · Kannada native.
 
 ---
 
@@ -256,12 +256,12 @@ Security & compliance: RBAC, JWT, session management, input sanitisation, HTTP i
 ---
 
 ## CHUNK: Why I'd be a strong hire (the honest pitch)
-Rare combination: 4.5 years shipping production code in regulated environments **plus** active AI engineering work **plus** Germany-based **plus** climbing German.
+Rare combination: 4.5 years shipping production code in regulated environments **plus** active model and platform work **plus** Germany-based **plus** climbing German.
 
-I know what reliability, security, observability, and CI/CD discipline look like at scale. Most teams shipping AI to production are missing exactly this layer.
+I know what reliability, security, observability, and CI/CD discipline look like at scale. Most teams shipping model-backed products are missing exactly this layer.
 
-I've already pivoted — this portfolio's RAG chatbot, the AlphaFold platform, the M.Sc. LLM coursework. Not "interested in AI"; *building* AI.
+I've already pivoted — this portfolio's RAG chatbot, the AlphaFold platform, the M.Sc. model coursework. Not "interested in AI"; building production-grade systems.
 
 Reliable contributor across cross-functional Agile teams. Two enterprise awards on record.
 
-Ideal teams: AI research groups needing platform engineering, applied-ML teams shipping LLM-powered products, AI infrastructure groups, MLOps teams. Anywhere rigorous software engineering on AI systems matters more than pure model development.
+Ideal teams: research groups needing platform engineering, applied model teams shipping product features, infrastructure groups, operations teams. Anywhere rigorous software engineering matters more than pure model development.
