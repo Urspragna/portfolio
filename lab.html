@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AI Lab — Pragna's Portfolio</title>
-<meta name="description" content="Live AI demos: RAG, embeddings, sentiment, tokenisation — built with FastAPI, sentence-transformers, and Anthropic Claude." />
+<title>Research Lab — Pragna's Portfolio</title>
+<meta name="description" content="Live model demos: RAG, embeddings, sentiment, tokenisation — built with FastAPI and sentence-transformers." />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%AA%3C/text%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -162,9 +162,9 @@ footer a { color: var(--accent); }
 <header class="hero">
   <div class="container">
     <div class="eyebrow">$ python -m app.lab</div>
-    <h1>AI Learning <span class="accent">Lab.</span></h1>
+    <h1>Research <span class="accent">Lab.</span></h1>
     <p>
-      Four hands-on demos that show what's actually happening inside an AI app — <strong>RAG retrieval</strong>, <strong>embeddings</strong>, <strong>sentiment classification</strong>, and <strong>tokenisation</strong>. Every demo is wired to the FastAPI backend at <code>/api/*</code>. Open <a href="/api/docs" target="_blank" style="color:var(--accent)">/api/docs</a> to see the full OpenAPI schema.
+    Four hands-on demos that show what's actually happening inside a model-backed app — <strong>RAG retrieval</strong>, <strong>embeddings</strong>, <strong>sentiment classification</strong>, and <strong>tokenisation</strong>. Every demo is wired to the FastAPI backend at <code>/api/*</code>. Open <a href="/api/docs" target="_blank" style="color:var(--accent)">/api/docs</a> to see the full OpenAPI schema.
     </p>
   </div>
 </header>
@@ -182,14 +182,14 @@ footer a { color: var(--accent); }
   <section class="demo active" id="demo-rag">
     <div class="demo-head">
       <div class="num">// demo 01 — Retrieval-Augmented Generation</div>
-      <h2>Ask Pragna AI</h2>
+      <h2>Ask Pragna</h2>
       <p>Type a question. The backend embeds it, retrieves the most-similar CV chunks, stitches them into the prompt, and streams an answer back. Citations are shown <em>before</em> the answer so you can see what the LLM was grounded on.</p>
     </div>
 
     <div class="panel">
       <h3>// query</h3>
       <label for="rag-q">your question</label>
-      <textarea id="rag-q" class="large" placeholder="e.g. What AI projects has Pragna shipped? Has she worked with PostgreSQL? What awards has she won?">What AI-related work has Pragna done?</textarea>
+      <textarea id="rag-q" class="large" placeholder="e.g. What projects has Pragna shipped? Has she worked with PostgreSQL? What awards has she won?">What work has Pragna done?</textarea>
       <div class="controls">
         <button class="btn btn-primary" id="rag-go">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -207,7 +207,7 @@ footer a { color: var(--accent); }
 
     <div class="panel">
       <h3>// generated answer</h3>
-      <div id="rag-answer" class="answer-box"><em>The LLM's response will stream in here…</em></div>
+      <div id="rag-answer" class="answer-box"><em>The response will stream in here…</em></div>
     </div>
 
     <div class="learn">
@@ -216,7 +216,7 @@ footer a { color: var(--accent); }
         <li><b>Chunk.</b> The CV is split into semantic units at <code>## CHUNK:</code> markers — see <code>data/knowledge_base.md</code>.</li>
         <li><b>Embed.</b> Each chunk + your query becomes a 384-dim vector via <code>sentence-transformers/all-MiniLM-L6-v2</code>.</li>
         <li><b>Retrieve.</b> Cosine similarity ranks chunks; top-k goes into the prompt.</li>
-        <li><b>Augment + Generate.</b> A system prompt instructs the LLM to answer <em>only</em> from context — that's what makes RAG faithful instead of hallucinatory.</li>
+        <li><b>Augment + Generate.</b> A system prompt instructs the model to answer <em>only</em> from context — that's what makes RAG faithful instead of hallucinatory.</li>
       </ol>
     </div>
   </section>
@@ -257,7 +257,7 @@ footer a { color: var(--accent); }
 
     <div class="learn">
       <h4>// the intuition</h4>
-      <p>Modern LLMs operate on embeddings under the hood — every token, every chunk, every search query becomes a vector. <b>RAG is just embedding similarity at scale.</b> Try synonyms, antonyms, or text in different languages and watch the score change.</p>
+      <p>Modern models operate on embeddings under the hood — every token, every chunk, every search query becomes a vector. <b>RAG is just embedding similarity at scale.</b> Try synonyms, antonyms, or text in different languages and watch the score change.</p>
     </div>
   </section>
 
@@ -290,8 +290,8 @@ footer a { color: var(--accent); }
   <section class="demo" id="demo-token">
     <div class="demo-head">
       <div class="num">// demo 04 — Tokenisation</div>
-      <h2>How LLMs see your text</h2>
-      <p>LLMs don't read characters — they read <em>tokens</em>. Each token costs money in API calls and dictates how prompts fit in the context window. Below is a word-level split plus a coarse byte-pair-encoding-style split for comparison.</p>
+      <h2>How models see your text</h2>
+      <p>Models don't read characters — they read <em>tokens</em>. Each token affects API calls and dictates how prompts fit in the context window. Below is a word-level split plus a coarse byte-pair-encoding-style split for comparison.</p>
     </div>
 
     <div class="panel">
@@ -325,7 +325,7 @@ footer a { color: var(--accent); }
 
 <footer>
   <div class="container">
-    <p>Powered by <strong style="color:var(--text)">FastAPI</strong> · <strong style="color:var(--text)">SQLAlchemy 2.0</strong> · <strong style="color:var(--text)">sentence-transformers</strong> · <strong style="color:var(--text)">Anthropic Claude</strong></p>
+    <p>Powered by <strong style="color:var(--text)">FastAPI</strong> · <strong style="color:var(--text)">SQLAlchemy 2.0</strong> · <strong style="color:var(--text)">sentence-transformers</strong></p>
     <p style="margin-top:6px">Built by <a href="/">Pragna Urs</a> · Rostock, Germany</p>
   </div>
 </footer>
