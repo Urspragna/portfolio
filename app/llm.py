@@ -33,15 +33,10 @@ class EchoLLM:
             question = q_part.split("Answer:")[0].strip()
         # FIXME: this parsing is a bit fragile, should use regex or structured format
 
-        intro = f"Based on my portfolio: here's what's relevant to {question or 'your question'}:\n\n"
-        yield intro
-
         body = ctx[:1400] if ctx else "(no relevant context found)"
         # Stream in small chunks for better UX
         for i in range(0, len(body), 60):
             yield body[i : i + 60]
-
-        yield "\n\n— Echo provider (no LLM key). Set ANTHROPIC_API_KEY or run `ollama serve` for real responses."
 
 
 # Anthropic Claude
@@ -93,6 +88,53 @@ class AnthropicLLM:
                             yield delta.get("text", "")
 
 
+# Groq
+
+class GroqLLM:
+    name = "groq"
+
+    def __init__(self, settings: Settings) -> None:
+        if not settings.groq_api_key:
+            raise RuntimeError("GROQ_API_KEY is required for the groq provider")
+        self.api_key = settings.groq_api_key
+        self.model = settings.groq_model
+
+    async def stream(self, prompt: str) -> AsyncIterator[str]:
+        import json
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "model": self.model,
+            "max_tokens": 600,
+            "stream": True,
+            "messages": [{"role": "user", "content": prompt}],
+        }
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            async with client.stream(
+                "POST",
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers=headers,
+                json=payload,
+            ) as resp:
+                resp.raise_for_status()
+                async for line in resp.aiter_lines():
+                    if not line or not line.startswith("data:"):
+                        continue
+                    raw = line[5:].strip()
+                    if raw == "[DONE]":
+                        break
+                    try:
+                        evt = json.loads(raw)
+                    except json.JSONDecodeError:
+                        continue
+                    delta = evt.get("choices", [{}])[0].get("delta", {})
+                    text = delta.get("content")
+                    if text:
+                        yield text
+
+
 # Ollama (local LLM)
 
 class OllamaLLM:
@@ -131,6 +173,8 @@ def make_llm(settings: Settings | None = None) -> LLM:
     provider = settings.llm_provider
     if provider == "anthropic" and settings.anthropic_api_key:
         return AnthropicLLM(settings)  # type: ignore[return-value]
+    if provider == "groq" and settings.groq_api_key:
+        return GroqLLM(settings)  # type: ignore[return-value]
     if provider == "ollama":
         return OllamaLLM(settings)  # type: ignore[return-value]
     return EchoLLM()  # type: ignore[return-value]
