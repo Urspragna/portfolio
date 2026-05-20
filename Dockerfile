@@ -36,7 +36,7 @@ COPY --chown=app:app . .
 # Make entrypoint executable
 RUN chmod +x /home/app/entrypoint.sh
 
-EXPOSE 8000
+EXPOSE 7860
 
 USER app
 
