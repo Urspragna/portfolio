@@ -7,12 +7,31 @@
 ---
 
 ## CHUNK: Who I am, in my own voice
-I'm Pragna, a software engineer focused on reliable production systems. I spent 4.5 years building web platforms for banks, retailers, and telecom — the kind of systems where uptime and security matter. Now I'm in Rostock for an M.Sc. in Computer Science, bringing that operational mindset into model-backed tooling. The model is important; the platform around it is what makes it useful.
+I'm Pragna, a software engineer focused on reliable production systems. I spent 4.5+ years building web platforms for banks, retailers, and telecom — the kind of systems where uptime and security matter. Now I'm in Rostock for an M.Sc. in Computer Science, bringing that operational mindset into model-backed tooling. The model is important; the platform around it is what makes it useful.
 
 ---
 
 ## CHUNK: How I think about the AI pivot — the honest version
 I didn't decide to "switch into AI." I kept seeing the same problems in fintech, retail telemetry, and diagnostics streaming: auth, observability, RBAC, real-time data. Most production failures are not model failures. They are software failures. This is less a career change and more applying what I already know to the part of the system that matters.
+
+---
+
+## CHUNK: The tech stack that powers this very chatbot
+This portfolio's chatbot is the live AI artefact on the site. Anyone asking what runs underneath should get a precise answer.
+
+Backend: Python 3.12 with FastAPI (async, type-safe), Uvicorn as the ASGI server, Pydantic v2 for request validation, SQLAlchemy 2.0 (async) as the ORM. SQLite + aiosqlite for development, PostgreSQL + asyncpg for production (with pgvector ready when chunk counts grow).
+
+AI layer: a from-scratch RAG pipeline in roughly 200 lines of Python — no LangChain, no LlamaIndex. The pipeline chunks the knowledge base on `## CHUNK:` markers, embeds each chunk into a 384-dim vector via sentence-transformers (`all-MiniLM-L6-v2`), retrieves top-k via cosine similarity using NumPy, stitches retrieved passages into a system-prompted prompt, then streams the LLM response back to the browser as Server-Sent Events.
+
+LLM provider layer: pluggable. Options behind the same interface — Groq (Llama 3.3 70B) for fast production inference, Anthropic Claude for quality, Ollama for local free generation, and a deterministic echo provider as fallback. Provider is selected via the `LLM_PROVIDER` environment variable.
+
+Security: per-IP rate limiting via slowapi (20/min on chat, 60/min on demos), security response headers (CSP, X-Frame-Options, Referrer-Policy, Permissions-Policy), prompt-injection sanitisation on every visitor input, conditional `/docs` exposure (hidden in production), global exception handler that hides stack traces in production, narrowed CORS and trusted-host policy in production.
+
+Frontend: hand-written HTML, CSS, and vanilla JavaScript. No React, no Vue, no build step. The chat widget consumes the SSE stream with `fetch().body.getReader()`. The `/lab` page exposes four interactive demos backed by `/api/demo/embed`, `/api/demo/sentiment`, and `/api/demo/tokenise`.
+
+Deployment: multi-stage Dockerfile (build stage + slim runtime stage), running as a non-root user, with a healthcheck against `/api/health`. Currently hosted on Railway; deploys identically to Hugging Face Spaces, Fly.io, or Render.
+
+Logging: every chat turn and demo run is persisted anonymously to the database (no IPs, no identity) so I can later see what visitors ask and where retrieval falls short.
 
 ---
 
@@ -260,7 +279,7 @@ Rare combination: 4.5 years shipping production code in regulated environments *
 
 I know what reliability, security, observability, and CI/CD discipline look like at scale. Most teams shipping model-backed products are missing exactly this layer.
 
-I've already pivoted — this portfolio's RAG chatbot, the AlphaFold platform, the M.Sc. model coursework. Not "interested in AI"; building production-grade systems.
+I'm in the middle of the pivot, not at the end of it. This portfolio's RAG chatbot, the AlphaFold platform, and the M.Sc. model coursework are the active work — not the résumé polish. Learning by building, in public.
 
 Reliable contributor across cross-functional Agile teams. Two enterprise awards on record.
 
