@@ -164,15 +164,15 @@ footer a { color: var(--accent); }
     <div class="eyebrow">$ python -m app.lab</div>
     <h1>Research <span class="accent">Lab.</span></h1>
     <p>
-    Four hands-on demos that show what's actually happening inside a model-backed app — <strong>RAG retrieval</strong>, <strong>embeddings</strong>, <strong>sentiment classification</strong>, and <strong>tokenisation</strong>. Every demo is wired to the FastAPI backend at <code>/api/*</code>. Open <a href="/api/docs" target="_blank" style="color:var(--accent)">/api/docs</a> to see the full OpenAPI schema.
+    Four hands-on demos that show what's actually happening inside a model-backed app — <strong>retrieval</strong>, <strong>embeddings</strong>, <strong>sentiment classification</strong>, and <strong>tokenisation</strong>. Every demo is wired to the FastAPI backend at <code>/api/*</code>. Open <a href="/api/docs" target="_blank" style="color:var(--accent)">/api/docs</a> to see the full OpenAPI schema.
     </p>
-  </div>
+    Four hands-on demos that show what's actually happening inside a model-backed app — <strong>retrieval</strong>, <strong>embeddings</strong>, <strong>sentiment classification</strong>, and <strong>tokenisation</strong>. Every demo is wired to the FastAPI backend at <code>/api/*</code>. Open <a href="/api/docs" target="_blank" style="color:var(--accent)">/api/docs</a> to see the full OpenAPI schema.
 </header>
 
 <div class="container">
 
   <div class="tabs" role="tablist">
-    <button class="tab active" data-tab="rag">01 · RAG</button>
+    <button class="tab active" data-tab="rag">01 · retrieval</button>
     <button class="tab" data-tab="embed">02 · Embeddings</button>
     <button class="tab" data-tab="sentiment">03 · Sentiment</button>
     <button class="tab" data-tab="token">04 · Tokens</button>
@@ -181,9 +181,9 @@ footer a { color: var(--accent); }
   <!-- ── DEMO 1 · RAG ──────────────────────────────────────── -->
   <section class="demo active" id="demo-rag">
     <div class="demo-head">
-      <div class="num">// demo 01 — Retrieval-Augmented Generation</div>
+      <div class="num">// demo 01 — retrieval workflow</div>
       <h2>Ask Pragna</h2>
-      <p>Type a question. The backend embeds it, retrieves the most-similar CV chunks, stitches them into the prompt, and streams an answer back. Citations are shown <em>before</em> the answer so you can see what the LLM was grounded on.</p>
+      <p>Type a question. The backend embeds it, retrieves the most-similar CV chunks, stitches them into the prompt, and streams an answer back. Citations are shown <em>before</em> the answer so you can see what the response was grounded on.</p>
     </div>
 
     <div class="panel">
@@ -193,9 +193,9 @@ footer a { color: var(--accent); }
       <div class="controls">
         <button class="btn btn-primary" id="rag-go">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          Run RAG
+          Run retrieval
         </button>
-        <button class="btn" id="rag-preview">Retrieve only (skip LLM)</button>
+        <button class="btn" id="rag-preview">Retrieve only</button>
       </div>
       <div class="note">Retrieval uses cosine similarity over <b>sentence-transformers</b> embeddings (or a hash fallback in restricted environments).</div>
     </div>
@@ -216,7 +216,7 @@ footer a { color: var(--accent); }
         <li><b>Chunk.</b> The CV is split into semantic units at <code>## CHUNK:</code> markers — see <code>data/knowledge_base.md</code>.</li>
         <li><b>Embed.</b> Each chunk + your query becomes a 384-dim vector via <code>sentence-transformers/all-MiniLM-L6-v2</code>.</li>
         <li><b>Retrieve.</b> Cosine similarity ranks chunks; top-k goes into the prompt.</li>
-        <li><b>Augment + Generate.</b> A system prompt instructs the model to answer <em>only</em> from context — that's what makes RAG faithful instead of hallucinatory.</li>
+        <li><b>Augment + Generate.</b> A system prompt instructs the assistant to answer <em>only</em> from context — that's what makes retrieval faithful instead of hallucinatory.</li>
       </ol>
     </div>
   </section>
@@ -257,7 +257,7 @@ footer a { color: var(--accent); }
 
     <div class="learn">
       <h4>// the intuition</h4>
-      <p>Modern models operate on embeddings under the hood — every token, every chunk, every search query becomes a vector. <b>RAG is just embedding similarity at scale.</b> Try synonyms, antonyms, or text in different languages and watch the score change.</p>
+      <p>Modern systems operate on embeddings under the hood — every token, every chunk, every search query becomes a vector. <b>Retrieval is just embedding similarity at scale.</b> Try synonyms, antonyms, or text in different languages and watch the score change.</p>
     </div>
   </section>
 

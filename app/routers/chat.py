@@ -1,18 +1,19 @@
 """POST /api/chat — RAG chatbot (streaming SSE)."""
-from __future__ import annotations
-
 import json
 import time
-from typing import AsyncIterator
+from typing import Annotated, AsyncIterator
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Body, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
+from app.config import get_settings
 from app.db import Conversation, SessionLocal
 from app.rag import RAGIndex, build_prompt
+from app.security import limiter, sanitise_visitor_input
 
 router = APIRouter(prefix="/api", tags=["chat"])
+_settings = get_settings()
 
 
 class ChatRequest(BaseModel):
@@ -33,21 +34,27 @@ async def _try_log_conversation(**fields) -> None:
 
 
 @router.post("/chat")
+@limiter.limit(_settings.rate_limit_chat)
 async def chat(
-    body: ChatRequest,
     request: Request,
-) -> StreamingResponse:
+    body: Annotated[ChatRequest, Body()],
+):
     """Stream a RAG-grounded answer (SSE)."""
     index: RAGIndex = request.app.state.rag_index
     llm = request.app.state.llm
 
-    hits = index.retrieve(body.message, k=body.k)
+    # Sanitise visitor input before it reaches the LLM or the persistence layer.
+    cleaned = sanitise_visitor_input(body.message, max_chars=_settings.max_input_chars)
+    if not cleaned:
+        raise HTTPException(status_code=400, detail="Message is empty after sanitisation.")
+
+    hits = index.retrieve(cleaned, k=body.k)
     citations = [
         {"title": h.chunk.title, "score": round(h.score, 4)} for h in hits
     ]
 
     prompt = build_prompt(
-        body.message, hits, max_chars=request.app.state.settings.max_context_chars
+        cleaned, hits, max_chars=request.app.state.settings.max_context_chars
     )
 
     async def event_stream() -> AsyncIterator[bytes]:
@@ -63,10 +70,10 @@ async def chat(
         latency_ms = int((time.perf_counter() - t0) * 1000)
         full_answer = "".join(chunks)
 
-        # Log the turn (anonymously, best-effort)
-        # FIXME: should maybe truncate really long answers before storing
+        # Log the turn (anonymously, best-effort) — use the *cleaned* question
+        # so we never persist obvious injection text into our own DB.
         await _try_log_conversation(
-            question=body.message,
+            question=cleaned[:2000],
             answer=full_answer[:8000],
             citations=json.dumps(citations),
             latency_ms=latency_ms,
@@ -84,10 +91,14 @@ def _sse(event: str, data: dict) -> bytes:
 
 
 @router.get("/chat/citations")
-async def preview_citations(query: str, request: Request, k: int = 4) -> dict:
+@limiter.limit(_settings.rate_limit_demo)
+async def preview_citations(request: Request, query: str, k: int = 4) -> dict:
     """Retrieval only (no LLM)."""
+    if not 1 <= k <= 8:
+        raise HTTPException(status_code=400, detail="k must be between 1 and 8.")
     index: RAGIndex = request.app.state.rag_index
-    hits = index.retrieve(query, k=k)
+    cleaned = sanitise_visitor_input(query, max_chars=_settings.max_input_chars)
+    hits = index.retrieve(cleaned, k=k)
     return {
         "query": query,
         "k": k,

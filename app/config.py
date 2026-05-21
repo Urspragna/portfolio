@@ -27,14 +27,16 @@ class Settings(BaseSettings):
     database_url: str = f"sqlite+aiosqlite:///{ROOT / 'portfolio.db'}"
 
     # LLM provider
-    llm_provider: Literal["anthropic", "ollama", "echo"] = "echo"
+    llm_provider: Literal["anthropic", "groq", "ollama", "echo"] = "echo"
     anthropic_api_key: str | None = None
     anthropic_model: str = "claude-sonnet-4-6"
+    groq_api_key: str | None = None
+    groq_model: str = "llama-3.3-70b-versatile"
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "llama3.2"
 
     # Embeddings
-    embedding_provider: Literal["sbert", "hash"] = "sbert"
+    embedding_provider: Literal["sbert", "hash"] = "hash"
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
     embedding_dim: int = 384
 
@@ -46,6 +48,14 @@ class Settings(BaseSettings):
 
     # Frontend
     public_dir: Path = Field(default_factory=lambda: ROOT)
+
+    # Security
+    api_docs_enabled: bool = True  # set False in production to hide Swagger UI / OpenAPI schema
+    rate_limit_chat: str = "20/minute"   # per-IP cap on the LLM-burning endpoint
+    rate_limit_demo: str = "60/minute"   # demos are cheap; allow more
+    rate_limit_default: str = "120/minute"
+    trusted_hosts: list[str] = Field(default_factory=list)  # empty => allow any (dev). Set in prod.
+    max_input_chars: int = 2000           # hard cap on visitor-supplied input across all endpoints
 
     model_config = SettingsConfigDict(
         env_file=str(ROOT / ".env"),

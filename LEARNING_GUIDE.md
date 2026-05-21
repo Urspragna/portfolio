@@ -861,7 +861,7 @@ cat > data/knowledge_base.md << 'EOF'
 # Pragna's Knowledge Base
 
 ## CHUNK: Who I am
-I'm a software engineer building AI products.
+I'm a software engineer with 4.5 years of production experience, now pivoting toward AI infrastructure.
 
 ---
 

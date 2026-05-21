@@ -1,11 +1,13 @@
 """FastAPI app entry point."""
 from __future__ import annotations
 
+import traceback
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -16,8 +18,10 @@ from app.llm import make_llm
 from app.rag import Embedder, load_index
 from app.routers.chat import router as chat_router
 from app.routers.demos import router as demos_router
+from app.security import install_security
 
 settings = get_settings()
+IS_PROD = settings.environment == "production"
 
 
 @asynccontextmanager
@@ -56,27 +60,62 @@ async def lifespan(app: FastAPI):
     print(f"[{settings.app_name}] shutting down")
 
 
+# In production, hide the OpenAPI schema + Swagger UI unless explicitly enabled.
+# Recruiters can still see auto-docs locally; the public surface stays minimal.
+_docs_enabled = settings.api_docs_enabled and not IS_PROD or settings.api_docs_enabled
+
 app = FastAPI(
     title=settings.app_name,
     version=__version__,
     description=(
-        "AI-powered backend for Pragna's portfolio.\n\n"
-        "• `/api/chat` — RAG chatbot grounded on her CV\n"
+        "Backend for Pragna's portfolio.\n\n"
+        "• `/api/chat` — RAG chatbot grounded on her knowledge base\n"
         "• `/api/demo/embed` — embedding similarity\n"
-        "• `/api/demo/sentiment` — sentiment analysis\n"
+        "• `/api/demo/sentiment` — sentiment classification\n"
         "• `/api/demo/tokenise` — tokenisation visualiser\n"
     ),
     lifespan=lifespan,
+    docs_url="/docs" if _docs_enabled else None,
+    redoc_url="/redoc" if _docs_enabled else None,
+    openapi_url="/openapi.json" if _docs_enabled else None,
 )
 
-# Middleware
+# Security: rate limiting + security headers + 429 handler
+install_security(app)
+
+# CORS — narrow in production, permissive in development.
+# `allow_credentials=False` because the API doesn't use cookies.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=settings.cors_origins if IS_PROD else ["*"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
 )
+
+# Reject requests to unknown Host: headers in production (defence in depth).
+if IS_PROD and settings.trusted_hosts:
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.trusted_hosts)
+
+
+# Global exception handler — never leak stack traces in production.
+@app.exception_handler(Exception)
+async def _unhandled(request: Request, exc: Exception) -> JSONResponse:
+    if IS_PROD:
+        # Log server-side, return generic to the caller.
+        print(f"[error] {type(exc).__name__} at {request.url.path}: {exc}")
+        return JSONResponse(
+            {"detail": "Internal server error."},
+            status_code=500,
+        )
+    # Development: include the traceback so debugging is easy.
+    return JSONResponse(
+        {
+            "detail": f"{type(exc).__name__}: {exc}",
+            "trace": traceback.format_exc().splitlines()[-12:],
+        },
+        status_code=500,
+    )
 
 
 # Health check

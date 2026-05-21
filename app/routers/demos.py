@@ -1,15 +1,17 @@
 """AI demos: embeddings, sentiment, tokenisation."""
-from __future__ import annotations
-
 import time
+from typing import Annotated
 
 import numpy as np
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Body, Request
 from pydantic import BaseModel, Field
 
+from app.config import get_settings
 from app.db import DemoRun, SessionLocal
+from app.security import limiter, sanitise_visitor_input
 
 router = APIRouter(prefix="/api/demo", tags=["demos"])
+_settings = get_settings()
 
 
 async def _log_demo(**fields) -> None:
@@ -30,14 +32,17 @@ class EmbedRequest(BaseModel):
 
 
 @router.post("/embed")
+@limiter.limit(_settings.rate_limit_demo)
 async def embed_similarity(
-    body: EmbedRequest,
     request: Request,
+    body: Annotated[EmbedRequest, Body()],
 ) -> dict:
     """Cosine similarity + vector preview."""
     t0 = time.perf_counter()
     embedder = request.app.state.embedder
-    vecs = embedder.encode([body.a, body.b])
+    a_text = sanitise_visitor_input(body.a, max_chars=_settings.max_input_chars)
+    b_text = sanitise_visitor_input(body.b, max_chars=_settings.max_input_chars)
+    vecs = embedder.encode([a_text, b_text])
     a, b = vecs[0], vecs[1]
     
     # Compute cosine similarity
@@ -51,11 +56,11 @@ async def embed_similarity(
     
     latency_ms = int((time.perf_counter() - t0) * 1000)
 
-    await _log_demo(demo="embed", input_excerpt=body.a[:140], latency_ms=latency_ms)
+    await _log_demo(demo="embed", input_excerpt=a_text[:140], latency_ms=latency_ms)
 
     return {
-        "a": body.a,
-        "b": body.b,
+        "a": a_text,
+        "b": b_text,
         "similarity": round(cos, 4),
         "dim": int(a.shape[0]),
         "vector_a_preview": [round(float(x), 4) for x in a[:8]],
@@ -101,16 +106,18 @@ _NEG = {
 
 
 @router.post("/sentiment")
+@limiter.limit(_settings.rate_limit_demo)
 async def sentiment(
-    body: SentimentRequest,
     request: Request,
+    body: Annotated[SentimentRequest, Body()],
 ) -> dict:
     t0 = time.perf_counter()
+    body_text = sanitise_visitor_input(body.text, max_chars=_settings.max_input_chars)
     pipe = _get_sentiment()
 
     if pipe == "fallback":
         # Simple lexicon-based fallback
-        toks = [w.strip(".,!?;:") for w in body.text.lower().split() if w]
+        toks = [w.strip(".,!?;:") for w in body_text.lower().split() if w]
         pos = sum(t in _POS for t in toks)
         neg = sum(t in _NEG for t in toks)
         if pos == neg:
@@ -120,7 +127,7 @@ async def sentiment(
             score = (max(pos, neg)) / (pos + neg + 1)
         out = {"label": label, "score": round(float(score), 4), "engine": "lexicon-fallback"}
     else:
-        result = pipe(body.text[:512])[0]
+        result = pipe(body_text[:512])[0]
         out = {
             "label": result["label"].upper(),
             "score": round(float(result["score"]), 4),
@@ -130,7 +137,7 @@ async def sentiment(
     latency_ms = int((time.perf_counter() - t0) * 1000)
     out["latency_ms"] = latency_ms
 
-    await _log_demo(demo="sentiment", input_excerpt=body.text[:140], latency_ms=latency_ms)
+    await _log_demo(demo="sentiment", input_excerpt=body_text[:140], latency_ms=latency_ms)
     return out
 
 
@@ -141,9 +148,10 @@ class TokeniseRequest(BaseModel):
 
 
 @router.post("/tokenise")
-async def tokenise(body: TokeniseRequest) -> dict:
+@limiter.limit(_settings.rate_limit_demo)
+async def tokenise(request: Request, body: Annotated[TokeniseRequest, Body()]) -> dict:
     """Return a simple whitespace + sub-word tokenisation for visualisation."""
-    text = body.text
+    text = sanitise_visitor_input(body.text, max_chars=_settings.max_input_chars)
     words = text.split()
     
     # Illustrative BPE-style split: break long tokens into 4-char pieces
