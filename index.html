@@ -361,7 +361,7 @@ footer a { color: var(--accent); }
       <a href="#work" data-n="03.">work</a>
       <a href="#experience" data-n="04.">experience</a>
       <a href="#contact" data-n="05.">contact</a>
-      <a href="/lab" data-n="06.">ai-lab</a>
+      <a href="/lab" data-n="06.">lab</a>
       <a class="nav-cta" href="Pragna_Master_CV.pdf" target="_blank" rel="noopener">Résumé ↗</a>
     </div>
   </div>
@@ -374,7 +374,7 @@ footer a { color: var(--accent); }
     <h1 class="reveal d1">Pragna Urs<br/><span class="accent">Mysore Gopal.</span></h1>
     <h2 class="reveal d2"><span id="type"></span><span class="cursor"></span></h2>
     <p class="reveal d3">
-      I build software that actually works in production. Spent 4.5 years doing full-stack work for banks, retailers, and telecom companies. Now in Rostock doing an M.Sc. and applying that same instinct to research tooling and dependable model workflows.
+      I build software that actually works in production. Spent 4.5+ years doing full-stack work for banks, retailers, and telecom companies. Now in Rostock doing an M.Sc. and applying that same instinct to research tooling and dependable model workflows.
     </p>
     <div class="hero-cta reveal d3">
       <a class="btn btn-primary" href="#work">
@@ -535,6 +535,60 @@ footer a { color: var(--accent); }
     <div class="sec-head reveal"><span class="num">03.</span><h2>featured work</h2><div class="line"></div></div>
 
     <div class="featured-grid">
+
+      <!-- RAG Portfolio Chatbot -->
+      <article class="featured reveal">
+        <div class="featured-text">
+          <div class="label">Featured / live AI system</div>
+          <h3>Live RAG Chatbot — This Portfolio</h3>
+          <div class="featured-desc">
+            Built a retrieval-augmented generation pipeline from scratch — no LangChain, no LlamaIndex. The chatbot you see on this site chunks a knowledge base on <code>## CHUNK:</code> markers, embeds each chunk into 384-dim vectors via sentence-transformers, retrieves top-k via cosine similarity using NumPy, then streams the LLM response back as Server-Sent Events. Groq (Llama 3.3 70B) handles generation. The whole AI layer is ~200 lines of Python.
+          </div>
+          <div class="featured-tags">
+            <span>Python</span><span>FastAPI</span><span>RAG</span><span>sentence-transformers</span><span>Groq</span><span>SSE</span><span>NumPy</span>
+          </div>
+          <div class="featured-links">
+            <a href="#chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Try it live ↑</a>
+          </div>
+        </div>
+        <div class="featured-visual">
+          <svg viewBox="0 0 400 280" width="90%" height="90%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="rag" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#64ffda" stop-opacity="0.8"/>
+                <stop offset="100%" stop-color="#60a5fa" stop-opacity="0.6"/>
+              </linearGradient>
+            </defs>
+            <!-- KB chunks -->
+            <g fill="none" stroke="#64ffda" stroke-width="1.5" opacity="0.7">
+              <rect x="20" y="30" width="90" height="22" rx="4"/>
+              <rect x="20" y="62" width="90" height="22" rx="4"/>
+              <rect x="20" y="94" width="90" height="22" rx="4"/>
+              <rect x="20" y="126" width="90" height="22" rx="4"/>
+            </g>
+            <text x="65" y="45" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">chunk_01</text>
+            <text x="65" y="77" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">chunk_02</text>
+            <text x="65" y="109" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">chunk_03</text>
+            <text x="65" y="141" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">chunk_04</text>
+            <!-- arrows to retriever -->
+            <line x1="110" y1="75" x2="175" y2="110" stroke="#64ffda" stroke-width="1" opacity="0.5"/>
+            <line x1="110" y1="105" x2="175" y2="115" stroke="#64ffda" stroke-width="1.5" opacity="0.9"/>
+            <line x1="110" y1="135" x2="175" y2="120" stroke="#64ffda" stroke-width="1" opacity="0.5"/>
+            <!-- retriever box -->
+            <rect x="175" y="95" width="80" height="35" rx="6" fill="rgba(100,255,218,0.08)" stroke="#64ffda" stroke-width="1.5"/>
+            <text x="215" y="117" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">cosine sim</text>
+            <!-- arrow to LLM -->
+            <line x1="255" y1="112" x2="305" y2="90" stroke="url(#rag)" stroke-width="1.5"/>
+            <!-- LLM box -->
+            <rect x="305" y="68" width="75" height="45" rx="6" fill="rgba(96,165,250,0.08)" stroke="#60a5fa" stroke-width="1.5"/>
+            <text x="342" y="88" font-family="JetBrains Mono,monospace" font-size="9" fill="#60a5fa" text-anchor="middle">Groq</text>
+            <text x="342" y="102" font-family="JetBrains Mono,monospace" font-size="8" fill="#60a5fa" text-anchor="middle">llama-3.3</text>
+            <!-- SSE stream -->
+            <text x="200" y="185" font-family="JetBrains Mono,monospace" font-size="10" fill="#8a8a94" text-anchor="middle">→ streamed via SSE</text>
+            <text x="200" y="210" font-family="JetBrains Mono,monospace" font-size="9" fill="#5a5a63" text-anchor="middle">~200 lines · no LangChain</text>
+          </svg>
+        </div>
+      </article>
 
       <!-- AlphaFold -->
       <article class="featured reveal">
@@ -793,7 +847,7 @@ footer a { color: var(--accent); }
         <div class="tag-title">LANGUAGES</div>
         <h4>English — C1 <span style="color:var(--text-muted);font-weight:400;font-size:13px">(Advanced)</span></h4>
         <div class="divider" style="margin:12px 0"></div>
-        <h4>German — A1 <span style="color:var(--text-muted);font-weight:400;font-size:13px">(actively learning)</span></h4>
+        <h4>German — A2 <span style="color:var(--text-muted);font-weight:400;font-size:13px">(actively learning)</span></h4>
         <div class="divider" style="margin:12px 0"></div>
         <h4>Hindi — B2</h4>
         <div class="divider" style="margin:12px 0"></div>
@@ -859,7 +913,7 @@ footer a { color: var(--accent); }
   <div class="head">
     <div>
       <div class="ttl"><span class="robot">⚡</span>Ask Pragna</div>
-      <div class="sub">RAG · grounded on her CV</div>
+      <div class="sub">Retrieval · grounded on her CV</div>
     </div>
     <button class="x" id="chat-close" aria-label="Close">✕</button>
   </div>
@@ -869,9 +923,9 @@ footer a { color: var(--accent); }
     </div>
   </div>
   <div class="suggest">
-    <button data-q="Why did you pivot into AI?">Why AI?</button>
+    <button data-q="Why did you pivot into this project?">Why this project?</button>
     <button data-q="Tell me a story from one of your projects.">A story?</button>
-    <button data-q="What's your hot take on RAG vs fine-tuning?">RAG vs fine-tuning?</button>
+    <button data-q="What's your hot take on retrieval vs fine-tuning?">Retrieval vs fine-tuning?</button>
     <button data-q="What are you reading right now?">Reading list?</button>
   </div>
   <form class="input-row" id="chat-form">
@@ -888,7 +942,7 @@ footer a { color: var(--accent); }
   <a href="mailto:p.urs.mysore@gmail.com" aria-label="Email">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z"/><path d="M4 6l8 7 8-7"/></svg>
   </a>
-  <a href="Pragna_Urs_Resume.pdf" target="_blank" rel="noopener" aria-label="CV">
+  <a href="Pragna_Master_CV.pdf" target="_blank" rel="noopener" aria-label="CV">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
   </a>
 </div>
@@ -921,7 +975,6 @@ links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
 const phrases = [
   "Full-Stack Engineer · pivoting into AI",
   "M.Sc. Computer Science @ Uni Rostock",
-  "Production engineering · applied to AI",
   "Python · Angular · Flask · Data"
 ];
 const typeEl = document.getElementById('type');

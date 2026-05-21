@@ -111,7 +111,7 @@ Germany treats student work seriously: the Werkstudent / HiWi system is designed
 ---
 
 ## CHUNK: Learning German while doing an M.Sc.
-Brutal and good. I'm at A1, climbing. Most days my brain ends in two languages and I dream in neither. The M.Sc. is in English (international track), but living here means coffee in German, navigating the Bürgeramt in German, friends in German. Every week I understand a bit more. Ask me in six months.
+Brutal and good. I'm at A2, climbing. Most days my brain ends in two languages and I dream in neither. The M.Sc. is in English (international track), but living here means coffee in German, navigating the Bürgeramt in German, friends in German. Every week I understand a bit more. Ask me in six months.
 
 ---
 
@@ -181,7 +181,7 @@ Fastest is email — **p.urs.mysore@gmail.com**. I read it daily and reply withi
 
 Contact: p.urs.mysore@gmail.com · +49 155 10585488 · linkedin.com/in/pragna-urs
 
-Languages: English C1 · German A1 · Hindi B2 · Kannada native.
+Languages: English C1 · German A2 · Hindi B2 · Kannada native.
 
 ---
 
