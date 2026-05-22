@@ -30,7 +30,7 @@ Portfolio at `/` · AI Lab demos at `/lab`
 Portfolio/
 ├── index.html                  ← portfolio homepage (with floating chat widget)
 ├── lab.html                    ← AI Learning Lab — 4 live demos
-├── Pragna_Master_CV.pdf        ← résumé linked from the site
+├── Pragna_Urs_Resume.pdf       ← résumé linked from the site
 │
 ├── app/                        ← FastAPI backend
 │   ├── __init__.py
@@ -125,18 +125,6 @@ The **AI Lab** at `/lab` has 4 interactive demos:
 
 ---
 
-## Next steps
-
-1. **Swap to pgvector** — store vectors in Postgres instead of memory
-2. **Reranking** — add cross-encoder between retrieval + LLM
-3. **Hybrid search** — combine BM25 + dense retrieval
-4. **Eval suite** — write tests for retrieval quality
-5. **Function calling** — let LLM call `/api/demo/*` endpoints
-6. **Fine-tune** — label conversations, train on custom data
-7. **Observability** — wire langfuse or helicone for logging
-
----
-
 ## Personalization
 
 Edit `data/knowledge_base.md` (add/remove `## CHUNK:` blocks), restart server. Chunker rebuilds on each boot. For zero-downtime updates, add a `POST /api/admin/reindex` endpoint.
@@ -145,11 +133,12 @@ Edit `data/knowledge_base.md` (add/remove `## CHUNK:` blocks), restart server. C
 
 ## Tests
 
-Add `tests/test_rag.py` with pytest-asyncio. Useful tests:
-- `chunk_markdown` splits fixtures correctly
-- `RAGIndex.retrieve` finds expected chunks
-- `/api/health` returns 200 with chunk count
-- `/api/chat/citations` returns results with scores
+```bash
+pip install pytest pytest-asyncio
+pytest tests/ -v
+```
+
+Covers `chunk_markdown` splitting, `RAGIndex.retrieve` relevance and edge cases, and `build_prompt` context assembly. All 13 tests use the hash embedder — no model download required.
 
 ---
 
