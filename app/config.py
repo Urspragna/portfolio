@@ -36,7 +36,7 @@ class Settings(BaseSettings):
     ollama_model: str = "llama3.2"
 
     # Embeddings
-    embedding_provider: Literal["sbert", "hash"] = "hash"
+    embedding_provider: Literal["sbert", "hash"] = "sbert"
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
     embedding_dim: int = 384
 

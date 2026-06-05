@@ -69,31 +69,28 @@ async def embed_similarity(
     }
 
 
-# Sentiment (lazy-loaded)
+# Sentiment — loaded once at module import time so the first request is fast.
 
 class SentimentRequest(BaseModel):
     text: str = Field(..., min_length=1, max_length=1500)
 
 
-_SENTIMENT_PIPELINE = None
-
-
-def _get_sentiment():
-    """Load HF pipeline on demand. Falls back to a tiny lexicon classifier."""
-    global _SENTIMENT_PIPELINE
-    if _SENTIMENT_PIPELINE is not None:
-        return _SENTIMENT_PIPELINE
+def _load_sentiment_pipeline():
+    """Return (pipeline, engine_name). Never raises — falls back to lexicon."""
     try:
-        from transformers import pipeline  # type: ignore
-        # Note: first load can take a while (~2s), might want to do this on startup
-        _SENTIMENT_PIPELINE = pipeline(
+        from transformers import pipeline as hf_pipeline  # type: ignore
+        pipe = hf_pipeline(
             "sentiment-analysis",
             model="distilbert-base-uncased-finetuned-sst-2-english",
         )
-    except Exception:
-        _SENTIMENT_PIPELINE = "fallback"
-    return _SENTIMENT_PIPELINE
+        print("[demos] DistilBERT sentiment pipeline loaded ✓")
+        return pipe, "distilbert-sst2"
+    except Exception as exc:
+        print(f"[demos] transformers unavailable ({exc}); using lexicon fallback")
+        return None, "lexicon-fallback"
 
+
+_SENTIMENT_PIPE, _SENTIMENT_ENGINE = _load_sentiment_pipeline()
 
 _POS = {
     "good", "great", "excellent", "love", "amazing", "fantastic", "wonderful",
@@ -105,6 +102,18 @@ _NEG = {
 }
 
 
+def _lexicon_sentiment(text: str) -> dict:
+    toks = [w.strip(".,!?;:") for w in text.lower().split() if w]
+    pos = sum(t in _POS for t in toks)
+    neg = sum(t in _NEG for t in toks)
+    if pos == neg:
+        label, score = "NEUTRAL", 0.5
+    else:
+        label = "POSITIVE" if pos > neg else "NEGATIVE"
+        score = max(pos, neg) / (pos + neg + 1)
+    return {"label": label, "score": round(float(score), 4)}
+
+
 @router.post("/sentiment")
 @limiter.limit(_settings.rate_limit_demo)
 async def sentiment(
@@ -113,26 +122,16 @@ async def sentiment(
 ) -> dict:
     t0 = time.perf_counter()
     body_text = sanitise_visitor_input(body.text, max_chars=_settings.max_input_chars)
-    pipe = _get_sentiment()
 
-    if pipe == "fallback":
-        # Simple lexicon-based fallback
-        toks = [w.strip(".,!?;:") for w in body_text.lower().split() if w]
-        pos = sum(t in _POS for t in toks)
-        neg = sum(t in _NEG for t in toks)
-        if pos == neg:
-            label, score = "NEUTRAL", 0.5
-        else:
-            label = "POSITIVE" if pos > neg else "NEGATIVE"
-            score = (max(pos, neg)) / (pos + neg + 1)
-        out = {"label": label, "score": round(float(score), 4), "engine": "lexicon-fallback"}
-    else:
-        result = pipe(body_text[:512])[0]
+    if _SENTIMENT_PIPE is not None:
+        result = _SENTIMENT_PIPE(body_text[:512])[0]
         out = {
             "label": result["label"].upper(),
             "score": round(float(result["score"]), 4),
-            "engine": "distilbert-sst2",
+            "engine": _SENTIMENT_ENGINE,
         }
+    else:
+        out = {**_lexicon_sentiment(body_text), "engine": _SENTIMENT_ENGINE}
 
     latency_ms = int((time.perf_counter() - t0) * 1000)
     out["latency_ms"] = latency_ms

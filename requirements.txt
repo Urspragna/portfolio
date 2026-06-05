@@ -18,8 +18,12 @@ slowapi==0.1.9    # per-IP rate limiting
 
 # AI / RAG
 numpy==1.26.4
-# sentence-transformers, transformers, torch removed — too heavy for free hosting
-# embedding falls back to hash-based; sentiment falls back to lexicon classifier
+# CPU-only torch keeps the image ~700 MB lighter than the GPU build.
+# Install torch first so sentence-transformers picks up the CPU wheel.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.2.2+cpu
+sentence-transformers==3.0.1
+transformers==4.44.2
 
 # Optional: pgvector adapter (uncomment when moving to Postgres)
 # pgvector==0.3.6

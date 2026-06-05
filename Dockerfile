@@ -17,6 +17,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
 
+# Pre-download ML models during build so startup is instant and reliable.
+# Models are baked into the image layer — no runtime download needed.
+RUN python -c "\
+from sentence_transformers import SentenceTransformer; \
+SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2'); \
+print('sentence-transformers model cached ✓')"
+
+RUN python -c "\
+from transformers import pipeline; \
+pipeline('sentiment-analysis', model='distilbert-base-uncased-finetuned-sst-2-english'); \
+print('DistilBERT sentiment model cached ✓')"
+
 # ──────────────────────────────────────────────────────────────────────────
 # Stage 2 — runtime image
 # ──────────────────────────────────────────────────────────────────────────
