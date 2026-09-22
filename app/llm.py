@@ -1,4 +1,4 @@
-"""LLM provider abstraction: anthropic, ollama, or echo."""
+"""Provider abstraction: hosted, local, or echo."""
 from __future__ import annotations
 
 from typing import AsyncIterator, Protocol
@@ -39,7 +39,7 @@ class EchoLLM:
             yield body[i : i + 60]
 
 
-# Anthropic Claude
+# Hosted provider
 
 class AnthropicLLM:
     name = "anthropic"
@@ -135,7 +135,7 @@ class GroqLLM:
                         yield text
 
 
-# Ollama (local LLM)
+# Local provider
 
 class OllamaLLM:
     name = "ollama"

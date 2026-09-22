@@ -1,6 +1,6 @@
-"""Pragna's AI Portfolio — FastAPI backend.
+"""Pragna's Portfolio — FastAPI backend.
 
-A production-flavoured Python backend that powers the portfolio's AI features:
+A production-flavoured Python backend that powers the portfolio's interactive features:
   - /api/chat           : RAG-grounded chatbot over Pragna's CV
   - /api/demo/sentiment : sentiment analysis (HF transformers)
   - /api/demo/embed     : embedding similarity tool
