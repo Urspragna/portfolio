@@ -59,15 +59,21 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next) -> Response:
         response = await call_next(request)
-        response.headers.setdefault("X-Content-Type-Options", "nosniff")
-        response.headers.setdefault("X-Frame-Options", "DENY")
-        response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
-        response.headers.setdefault(
+        h = response.headers
+
+        h.setdefault("X-Content-Type-Options", "nosniff")
+        h.setdefault("X-Frame-Options", "DENY")
+        h.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+        h.setdefault("X-DNS-Prefetch-Control", "off")
+        h.setdefault(
+            "Strict-Transport-Security",
+            "max-age=63072000; includeSubDomains; preload",
+        )
+        h.setdefault(
             "Permissions-Policy",
             "geolocation=(), microphone=(), camera=(), payment=()",
         )
-        # Conservative CSP: only allow scripts/styles from self + Google Fonts CDN.
-        response.headers.setdefault(
+        h.setdefault(
             "Content-Security-Policy",
             "default-src 'self'; "
             "script-src 'self' 'unsafe-inline'; "
@@ -77,6 +83,12 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             "connect-src 'self'; "
             "frame-ancestors 'none'",
         )
+
+        # API responses must not be cached — they contain live model output.
+        if request.url.path.startswith("/api/"):
+            h.setdefault("Cache-Control", "no-store")
+            h.setdefault("Pragma", "no-cache")
+
         return response
 
 

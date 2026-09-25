@@ -122,6 +122,8 @@ async def _unhandled(request: Request, exc: Exception) -> JSONResponse:
 @app.get("/api/health", tags=["meta"])
 async def health() -> dict:
     """Health check with status."""
+    if IS_PROD:
+        return {"ok": True}
     return {
         "ok": True,
         "version": __version__,
