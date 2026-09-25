@@ -82,7 +82,7 @@ section { padding: 120px 0; position: relative; }
 .nav-links { display: flex; gap: 36px; align-items: center; font-family: var(--mono); font-size: 13px; }
 .nav-links a { color: var(--text-muted); transition: color .2s; position: relative; }
 .nav-links a::before { content: attr(data-n); color: var(--accent); margin-right: 6px; font-weight: 500; }
-.nav-links a:hover { color: var(--text); }
+.nav-links a:hover { color: var(--accent); }
 .nav-cta { padding: 9px 18px; border: 1px solid var(--accent); color: var(--accent); border-radius: 6px; font-family: var(--mono); font-size: 12px; transition: all .2s; }
 .nav-cta:hover { background: rgba(100,255,218,.08); box-shadow: var(--glow); }
 
@@ -306,6 +306,37 @@ footer a { color: var(--accent); }
 /* print-friendly */
 @media print { #bg-canvas, .noise, .radial-glow, .side, .nav, .scroll-hint, #chatbot, #chat-fab { display: none !important; } body { background: #fff; color: #000; } }
 
+/* ==========================
+   HERO CODE TEXTURE
+   ========================== */
+.hero-code-bg {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='180'%3E%3Ctext x='12' y='20' font-family='monospace' font-size='11' fill='%2364ffda' opacity='0.07'%3Edef embed(chunks%2C model)%3A return %5Bmodel.encode(c) for c in chunks%5D%3C%2Ftext%3E%3Ctext x='12' y='50' font-family='monospace' font-size='11' fill='%2364ffda' opacity='0.05'%3Escores %3D cosine_similarity(query_vec%2C chunk_vecs)%3C%2Ftext%3E%3Ctext x='12' y='80' font-family='monospace' font-size='11' fill='%2360a5fa' opacity='0.05'%3Easync def stream_tokens(prompt%2C ctx)%3A yield token%3C%2Ftext%3E%3Ctext x='12' y='110' font-family='monospace' font-size='11' fill='%2364ffda' opacity='0.05'%3Etop_k %3D sorted(zip(chunks%2C scores)%2C key%3Dlambda x%3A -x%5B1%5D)%5B%3Ak%5D%3C%2Ftext%3E%3Ctext x='12' y='140' font-family='monospace' font-size='11' fill='%23a78bfa' opacity='0.04'%3Eclass RAGPipeline%3A retrieve · embed · generate%3C%2Ftext%3E%3Ctext x='12' y='170' font-family='monospace' font-size='11' fill='%2364ffda' opacity='0.04'%3Efor chunk in chunks%3A embeddings.append(model.encode(chunk))%3C%2Ftext%3E%3C%2Fsvg%3E");
+  background-repeat: repeat;
+  animation: codeScroll 50s linear infinite;
+  z-index: 0;
+}
+.hero .container { position: relative; z-index: 1; }
+.hero .scroll-hint { z-index: 1; }
+@keyframes codeScroll { 0% { background-position: 0 0; } 100% { background-position: 0 180px; } }
+@media (prefers-reduced-motion: reduce) { .hero-code-bg { animation: none; } }
+
+/* ==========================
+   ASK-ME CYCLING TEXT
+   ========================== */
+#ask-cycling {
+  font-family: var(--mono); font-size: 14px; color: var(--accent-2);
+  margin-bottom: 22px; cursor: pointer; display: inline-flex;
+  align-items: center; gap: 6px; opacity: 0.85;
+  transition: opacity .2s, color .2s;
+  border-bottom: 1px dashed rgba(167,139,250,.35); padding-bottom: 2px;
+}
+#ask-cycling:hover { opacity: 1; color: var(--accent); border-bottom-color: rgba(100,255,218,.5); }
+#ask-cycling .ask-cursor {
+  display: inline-block; width: 2px; height: 0.85em;
+  background: var(--accent-2); animation: blink 1.05s step-end infinite; vertical-align: middle;
+}
+
 /* =========================
    ASK-PRAGNA-AI CHAT WIDGET
    ========================= */
@@ -372,10 +403,14 @@ footer a { color: var(--accent); }
 
 <!-- HERO -->
 <section class="hero" id="top">
+  <div class="hero-code-bg" aria-hidden="true"></div>
   <div class="container">
     <div class="hero-greet reveal">$ whoami<span class="cursor"></span></div>
     <h1 class="reveal d1">Pragna Urs<br/><span class="accent">Mysore Gopal.</span></h1>
     <h2 class="reveal d2"><span id="type"></span><span class="cursor"></span></h2>
+    <div id="ask-cycling" class="reveal d3" role="button" tabindex="0" aria-label="Open chat assistant">
+      <span id="ask-prompt">Ask me: why RAG over fine-tuning?</span><span class="ask-cursor"></span>
+    </div>
     <p class="reveal d3">
       4.5 years building full-stack products across fintech, retail, and telecom. Now focused on applied AI — RAG systems, LLM pipelines, and production Python backends. M.Sc. CS at Universität Rostock.
     </p>
@@ -555,41 +590,48 @@ footer a { color: var(--accent); }
             <a href="#chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Try it live ↑</a>
           </div>
         </div>
-        <div class="featured-visual">
-          <svg viewBox="0 0 400 280" width="90%" height="90%" xmlns="http://www.w3.org/2000/svg">
+        <div class="featured-visual rag-pipeline">
+          <svg id="rag-svg" viewBox="0 0 400 260" width="90%" height="90%" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <linearGradient id="rag" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id="rag-grad" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="#64ffda" stop-opacity="0.8"/>
                 <stop offset="100%" stop-color="#60a5fa" stop-opacity="0.6"/>
               </linearGradient>
             </defs>
-            <!-- KB chunks -->
-            <g fill="none" stroke="#64ffda" stroke-width="1.5" opacity="0.7">
-              <rect x="20" y="30" width="90" height="22" rx="4"/>
-              <rect x="20" y="62" width="90" height="22" rx="4"/>
-              <rect x="20" y="94" width="90" height="22" rx="4"/>
-              <rect x="20" y="126" width="90" height="22" rx="4"/>
+            <!-- KB chunks: 4 rects stacked at x=15 -->
+            <g fill="none" stroke="#64ffda" stroke-width="1.5">
+              <rect class="rag-chunk" x="15" y="28" width="90" height="22" rx="4"/>
+              <rect class="rag-chunk" x="15" y="60" width="90" height="22" rx="4"/>
+              <rect class="rag-chunk" x="15" y="92" width="90" height="22" rx="4"/>
+              <rect class="rag-chunk" x="15" y="124" width="90" height="22" rx="4"/>
             </g>
-            <text x="65" y="45" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">chunk_01</text>
-            <text x="65" y="77" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">chunk_02</text>
-            <text x="65" y="109" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">chunk_03</text>
-            <text x="65" y="141" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">chunk_04</text>
-            <!-- arrows to retriever -->
-            <line x1="110" y1="75" x2="175" y2="110" stroke="#64ffda" stroke-width="1" opacity="0.5"/>
-            <line x1="110" y1="105" x2="175" y2="115" stroke="#64ffda" stroke-width="1.5" opacity="0.9"/>
-            <line x1="110" y1="135" x2="175" y2="120" stroke="#64ffda" stroke-width="1" opacity="0.5"/>
-            <!-- retriever box -->
-            <rect x="175" y="95" width="80" height="35" rx="6" fill="rgba(100,255,218,0.08)" stroke="#64ffda" stroke-width="1.5"/>
-            <text x="215" y="117" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">cosine sim</text>
-            <!-- arrow to LLM -->
-            <line x1="255" y1="112" x2="305" y2="90" stroke="url(#rag)" stroke-width="1.5"/>
-            <!-- LLM box -->
-            <rect x="305" y="68" width="75" height="45" rx="6" fill="rgba(96,165,250,0.08)" stroke="#60a5fa" stroke-width="1.5"/>
-            <text x="342" y="88" font-family="JetBrains Mono,monospace" font-size="9" fill="#60a5fa" text-anchor="middle">Groq</text>
-            <text x="342" y="102" font-family="JetBrains Mono,monospace" font-size="8" fill="#60a5fa" text-anchor="middle">llama-3.3</text>
-            <!-- SSE stream -->
-            <text x="200" y="185" font-family="JetBrains Mono,monospace" font-size="10" fill="#8a8a94" text-anchor="middle">→ streamed via SSE</text>
-            <text x="200" y="210" font-family="JetBrains Mono,monospace" font-size="9" fill="#5a5a63" text-anchor="middle">~200 lines · no LangChain</text>
+            <text class="rag-chunk" x="60" y="43" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">chunk_01</text>
+            <text class="rag-chunk" x="60" y="75" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">chunk_02</text>
+            <text class="rag-chunk" x="60" y="107" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">chunk_03</text>
+            <text class="rag-chunk" x="60" y="139" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">chunk_04</text>
+            <!-- Fan arrows: chunk right edges (x=107) converging to cosine sim left (x=173, y=112) -->
+            <line class="rag-fan" x1="107" y1="39"  x2="173" y2="112" stroke="#64ffda" stroke-width="1"   opacity="0.6" stroke-dasharray="100" stroke-dashoffset="100"/>
+            <line class="rag-fan" x1="107" y1="71"  x2="173" y2="112" stroke="#64ffda" stroke-width="1.5" opacity="0.9" stroke-dasharray="78"  stroke-dashoffset="78"/>
+            <line class="rag-fan" x1="107" y1="103" x2="173" y2="112" stroke="#64ffda" stroke-width="1"   opacity="0.6" stroke-dasharray="68"  stroke-dashoffset="68"/>
+            <line class="rag-fan" x1="107" y1="135" x2="173" y2="112" stroke="#64ffda" stroke-width="1"   opacity="0.6" stroke-dasharray="72"  stroke-dashoffset="72"/>
+            <!-- Cosine sim box -->
+            <g id="rag-cosine">
+              <rect x="173" y="94" width="82" height="36" rx="6" fill="rgba(100,255,218,0.08)" stroke="#64ffda" stroke-width="1.5"/>
+              <text x="214" y="116" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">cosine sim</text>
+            </g>
+            <!-- Arrow: cosine sim → Groq -->
+            <line id="rag-arrow-groq" x1="257" y1="112" x2="303" y2="90" stroke="url(#rag-grad)" stroke-width="1.5" stroke-dasharray="60" stroke-dashoffset="60"/>
+            <!-- Groq box -->
+            <g id="rag-groq">
+              <rect x="303" y="68" width="78" height="44" rx="6" fill="rgba(96,165,250,0.08)" stroke="#60a5fa" stroke-width="1.5"/>
+              <text x="342" y="88" font-family="JetBrains Mono,monospace" font-size="9" fill="#60a5fa" text-anchor="middle">Groq</text>
+              <text x="342" y="102" font-family="JetBrains Mono,monospace" font-size="8" fill="#60a5fa" text-anchor="middle">llama-3.3</text>
+            </g>
+            <!-- SSE output -->
+            <g id="rag-sse">
+              <text x="200" y="185" font-family="JetBrains Mono,monospace" font-size="10" fill="#8a8a94" text-anchor="middle">→ streamed via SSE</text>
+              <text x="200" y="205" font-family="JetBrains Mono,monospace" font-size="9" fill="#5a5a63" text-anchor="middle">~200 lines · no LangChain</text>
+            </g>
           </svg>
         </div>
       </article>
@@ -1053,6 +1095,8 @@ footer a { color: var(--accent); }
   <a href="mailto:p.urs.mysore@gmail.com">p.urs.mysore@gmail.com →</a>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
 <script>
 /* ==== YEAR ==== */
 document.getElementById('yr').textContent = new Date().getFullYear();
@@ -1305,6 +1349,63 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
   form.addEventListener('submit', e => { e.preventDefault(); ask(input.value.trim()); });
   sug.forEach(b => b.addEventListener('click', () => ask(b.dataset.q)));
+})();
+
+/* ==== ASK-ME CYCLING TEXT ==== */
+(() => {
+  const phrases = [
+    'Ask me: why RAG over fine-tuning?',
+    'Ask me: tell me about AlphaFold',
+    'Ask me: why did you move to Rostock?'
+  ];
+  let idx = 0;
+  const el   = document.getElementById('ask-prompt');
+  const wrap = document.getElementById('ask-cycling');
+  if (!el || !wrap) return;
+
+  setInterval(() => { idx = (idx + 1) % phrases.length; el.textContent = phrases[idx]; }, 3200);
+
+  function openChat() {
+    const panel = document.getElementById('chatbot');
+    const fab   = document.getElementById('chat-fab');
+    if (panel && !panel.classList.contains('open')) {
+      panel.classList.add('open');
+      if (fab) fab.style.display = 'none';
+      const inp = document.getElementById('chat-input');
+      if (inp) setTimeout(() => inp.focus(), 120);
+    }
+  }
+  wrap.addEventListener('click', openChat);
+  wrap.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openChat(); } });
+})();
+
+/* ==== GSAP RAG PIPELINE ANIMATION ==== */
+(() => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  function initRag() {
+    if (typeof gsap === 'undefined') return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.set('.rag-chunk',       { opacity: 0 });
+    gsap.set('.rag-fan',         { strokeDashoffset: (i) => [100, 78, 68, 72][i], opacity: 0 });
+    gsap.set('#rag-cosine',      { opacity: 0 });
+    gsap.set('#rag-arrow-groq',  { strokeDashoffset: 60, opacity: 0 });
+    gsap.set('#rag-groq',        { opacity: 0 });
+    gsap.set('#rag-sse',         { opacity: 0 });
+
+    const tl = gsap.timeline({
+      scrollTrigger: { trigger: '#rag-svg', start: 'top 80%', once: true },
+      defaults: { ease: 'power2.out' }
+    });
+
+    tl.to('.rag-chunk',      { opacity: 0.85, duration: 0.35, stagger: 0.12 })
+      .to('.rag-fan',        { strokeDashoffset: 0, opacity: 0.7, duration: 0.5, stagger: 0.1 }, '-=0.1')
+      .to('#rag-cosine',     { opacity: 1, duration: 0.4 }, '-=0.2')
+      .to('#rag-arrow-groq', { strokeDashoffset: 0, opacity: 0.85, duration: 0.45 }, '+=0.1')
+      .to('#rag-groq',       { opacity: 1, duration: 0.4 }, '-=0.15')
+      .to('#rag-sse',        { opacity: 1, duration: 0.5 }, '+=0.1');
+  }
+  window.addEventListener('load', initRag);
 })();
 </script>
 </body>
