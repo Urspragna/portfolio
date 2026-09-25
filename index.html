@@ -62,7 +62,7 @@ section { padding: 120px 0; position: relative; }
 /* =========================
    BACKGROUND CANVAS
    ========================= */
-#bg-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.55; pointer-events: none; }
+#bg-canvas { display: none; }
 .noise { position: fixed; inset: 0; pointer-events: none; z-index: -1; opacity: .025;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 .radial-glow { position: fixed; pointer-events: none; width: 700px; height: 700px; border-radius: 50%; filter: blur(120px); opacity: .06; z-index: -1; }
@@ -103,17 +103,12 @@ section { padding: 120px 0; position: relative; }
    HERO
    ========================= */
 .hero { min-height: 100vh; display: flex; align-items: center; padding-top: 100px; padding-bottom: 60px; }
-.hero-greet { font-family: var(--mono); color: var(--accent); font-size: 14px; margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
-.hero-greet::before { content: ''; width: 20px; height: 1px; background: var(--accent); }
-.hero h1 { font-size: clamp(40px, 7vw, 78px); font-weight: 800; letter-spacing: -.03em; line-height: 1.05; margin-bottom: 14px; color: var(--text); }
-.hero h1 .accent { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-3) 60%, var(--accent-2) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-.hero h2 { font-size: clamp(22px, 4vw, 40px); font-weight: 600; color: var(--text-muted); margin-bottom: 28px; letter-spacing: -.02em; min-height: 1.2em; }
-.hero h2 .cursor { display: inline-block; width: 3px; background: var(--accent); animation: blink 1.05s step-end infinite; margin-left: 4px; vertical-align: baseline; height: 1em; transform: translateY(4px); }
+.hero-eyebrow { font-family: var(--mono); font-size: 13px; color: var(--text-dim); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 24px; }
+.hero h1 { font-size: clamp(52px, 9.5vw, 118px); font-weight: 900; letter-spacing: -.04em; line-height: 0.92; color: var(--text); text-transform: uppercase; margin-bottom: 30px; }
+.hero h1 .hero-name-dim { color: var(--text-muted); }
 @keyframes blink { 50% { opacity: 0; } }
-.hero-greet .cursor { display: inline-block; width: 2px; height: 0.85em; background: var(--accent); animation: blink 1.05s step-end infinite; margin-left: 3px; vertical-align: middle; }
-.about-card .code-cursor { display: inline-block; width: 7px; height: 1em; background: var(--accent); animation: blink 1.2s step-end infinite; vertical-align: text-bottom; opacity: 0.8; }
-.hero p { max-width: 620px; font-size: 17px; color: var(--text-muted); margin-bottom: 40px; }
-.hero p code { font-family: var(--mono); font-size: 14px; color: var(--accent); background: rgba(100,255,218,.07); padding: 2px 7px; border-radius: 4px; border: 1px solid rgba(100,255,218,.18); }
+.about-card .code-cursor { display: inline-block; width: 7px; height: 1em; background: #6366f1; animation: blink 1.2s step-end infinite; vertical-align: text-bottom; opacity: 0.8; }
+.hero p { max-width: 600px; font-size: clamp(16px, 1.8vw, 19px); color: var(--text-muted); margin-bottom: 40px; line-height: 1.65; }
 .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
 .btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px; border-radius: 8px; font-family: var(--mono); font-size: 13px; font-weight: 500; transition: all .25s ease; cursor: pointer; border: 1px solid var(--accent); color: var(--accent); background: transparent; }
 .btn:hover { background: rgba(99,102,241,.08); transform: translateY(-2px); box-shadow: var(--glow); }
@@ -142,7 +137,12 @@ section { padding: 120px 0; position: relative; }
 /* =========================
    ABOUT
    ========================= */
-.about-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 60px; align-items: start; }
+.about-grid { display: grid; grid-template-columns: 200px 1fr 320px; gap: 48px; align-items: start; }
+.about-photo { display: flex; }
+.photo-placeholder { aspect-ratio: 4/5; width: 200px; background: var(--bg-2); border: 2px dashed var(--border-hl); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+.photo-initials { font-size: 48px; font-weight: 900; color: var(--border-hl); letter-spacing: -.04em; }
+.photo-label { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+@media (max-width: 1060px) { .about-grid { grid-template-columns: 1fr 320px; } .about-photo { display: none; } }
 @media (max-width: 860px) { .about-grid { grid-template-columns: 1fr; gap: 40px; } }
 .about-text p { color: var(--text-muted); font-size: 16px; margin-bottom: 18px; }
 .about-text p strong { color: var(--text); font-weight: 600; }
@@ -307,36 +307,22 @@ footer a { color: var(--accent); }
 /* print-friendly */
 @media print { #bg-canvas, .noise, .radial-glow, .side, .nav, .scroll-hint, #chatbot, #chat-fab { display: none !important; } body { background: #fff; color: #000; } }
 
-/* ==========================
-   HERO CODE TEXTURE
-   ========================== */
-.hero-code-bg {
-  position: absolute; inset: 0; pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='180'%3E%3Ctext x='12' y='20' font-family='monospace' font-size='11' fill='%236366f1' opacity='0.1'%3Edef embed(chunks%2C model)%3A return %5Bmodel.encode(c) for c in chunks%5D%3C%2Ftext%3E%3Ctext x='12' y='50' font-family='monospace' font-size='11' fill='%236366f1' opacity='0.07'%3Escores %3D cosine_similarity(query_vec%2C chunk_vecs)%3C%2Ftext%3E%3Ctext x='12' y='80' font-family='monospace' font-size='11' fill='%230ea5e9' opacity='0.07'%3Easync def stream_tokens(prompt%2C ctx)%3A yield token%3C%2Ftext%3E%3Ctext x='12' y='110' font-family='monospace' font-size='11' fill='%236366f1' opacity='0.07'%3Etop_k %3D sorted(zip(chunks%2C scores)%2C key%3Dlambda x%3A -x%5B1%5D)%5B%3Ak%5D%3C%2Ftext%3E%3Ctext x='12' y='140' font-family='monospace' font-size='11' fill='%237c3aed' opacity='0.06'%3Eclass RAGPipeline%3A retrieve · embed · generate%3C%2Ftext%3E%3Ctext x='12' y='170' font-family='monospace' font-size='11' fill='%236366f1' opacity='0.06'%3Efor chunk in chunks%3A embeddings.append(model.encode(chunk))%3C%2Ftext%3E%3C%2Fsvg%3E");
-  background-repeat: repeat;
-  animation: codeScroll 50s linear infinite;
-  z-index: 0;
-}
-.hero .container { position: relative; z-index: 1; }
-.hero .scroll-hint { z-index: 1; }
-@keyframes codeScroll { 0% { background-position: 0 0; } 100% { background-position: 0 180px; } }
-@media (prefers-reduced-motion: reduce) { .hero-code-bg { animation: none; } }
-
-/* ==========================
-   ASK-ME CYCLING TEXT
-   ========================== */
-#ask-cycling {
-  font-family: var(--mono); font-size: 14px; color: var(--accent-2);
-  margin-bottom: 22px; cursor: pointer; display: inline-flex;
-  align-items: center; gap: 6px; opacity: 0.85;
-  transition: opacity .2s, color .2s;
-  border-bottom: 1px dashed rgba(167,139,250,.35); padding-bottom: 2px;
-}
-#ask-cycling:hover { opacity: 1; color: var(--accent); border-bottom-color: rgba(100,255,218,.5); }
-#ask-cycling .ask-cursor {
-  display: inline-block; width: 2px; height: 0.85em;
-  background: var(--accent-2); animation: blink 1.05s step-end infinite; vertical-align: middle;
-}
+/* =========================
+   WORK LIST
+   ========================= */
+.work-list { border-top: 1px solid var(--border); }
+.work-item { display: grid; grid-template-columns: 52px 1fr; gap: 24px; padding: 36px 0; border-bottom: 1px solid var(--border); transition: background .2s; }
+.work-item:hover { background: rgba(99,102,241,.025); }
+.work-num { font-family: var(--mono); font-size: 13px; color: var(--text-dim); padding-top: 4px; }
+.work-body { display: flex; flex-direction: column; gap: 10px; }
+.work-meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.work-type { font-family: var(--mono); font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: .08em; }
+.work-tags { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+.work-title { font-size: clamp(19px, 2.2vw, 24px); font-weight: 700; letter-spacing: -.02em; color: var(--text); line-height: 1.2; }
+.work-desc { font-size: 15px; color: var(--text-muted); max-width: 700px; line-height: 1.65; }
+.work-link { font-family: var(--mono); font-size: 13px; color: var(--accent); transition: opacity .2s; align-self: flex-start; margin-top: 4px; }
+.work-link:hover { opacity: .7; }
+@media (max-width: 600px) { .work-item { grid-template-columns: 36px 1fr; gap: 14px; padding: 26px 0; } }
 
 /* =========================
    ASK-PRAGNA-AI CHAT WIDGET
@@ -404,16 +390,12 @@ footer a { color: var(--accent); }
 
 <!-- HERO -->
 <section class="hero" id="top">
-  <div class="hero-code-bg" aria-hidden="true"></div>
   <div class="container">
-    <div class="hero-greet reveal">$ whoami<span class="cursor"></span></div>
-    <h1 class="reveal d1">Pragna Urs<br/><span class="accent">Mysore Gopal.</span></h1>
-    <h2 class="reveal d2"><span id="type"></span><span class="cursor"></span></h2>
-    <div id="ask-cycling" class="reveal d3" role="button" tabindex="0" aria-label="Open chat assistant">
-      <span id="ask-prompt">Ask me: why RAG over fine-tuning?</span><span class="ask-cursor"></span>
-    </div>
-    <p class="reveal d3">
-      4.5 years building full-stack products across fintech, retail, and telecom. Now focused on applied AI — RAG systems, LLM pipelines, and production Python backends. M.Sc. CS at Universität Rostock.
+    <div class="hero-eyebrow reveal">AI Developer · Full Stack Engineer · Python</div>
+    <h1 class="reveal d1">PRAGNA URS<br><span class="hero-name-dim">MYSORE GOPAL.</span></h1>
+    <p class="reveal d2">
+      4.5 years building full-stack products across fintech, retail, and telecom.
+      Now focused on RAG systems, LLM pipelines, and production Python backends.
     </p>
     <div class="hero-cta reveal d3">
       <a class="btn btn-primary" href="#work">
@@ -426,9 +408,8 @@ footer a { color: var(--accent); }
       </a>
     </div>
     <div class="hero-meta reveal d3">
-      <span><span class="k">status</span> <span class="v" style="color:var(--accent)">● AI Developer @ Baltic Agent Systems — open to new opportunities</span></span>
+      <span><span class="v" style="color:var(--accent)">● AI Developer @ Baltic Agent Systems — open to new opportunities</span></span>
       <span><span class="k">location</span> <span class="v">Rostock, DE</span></span>
-      <span><span class="k">focus</span> <span class="v">Full-Stack · RAG/AI · FastAPI</span></span>
       <span><span class="k">system</span> <span class="v" id="sys-status" style="color:var(--text-dim)">checking…</span></span>
     </div>
   </div>
@@ -440,8 +421,14 @@ footer a { color: var(--accent); }
   <div class="container">
     <div class="sec-head reveal"><span class="num">01.</span><h2>about me</h2><div class="line"></div></div>
     <div class="about-grid">
+      <div class="about-photo reveal">
+        <div class="photo-placeholder">
+          <span class="photo-initials">PU</span>
+          <span class="photo-label">photo coming soon</span>
+        </div>
+      </div>
       <div class="about-text reveal">
-        <p>I’m Pragna — started as a frontend engineer, grew into full-stack, then moved into data at TCS where I built analytics pipelines and dashboards on top of Microsoft Graph API. Each step added a layer: UI craft, then backend and systems thinking, then data at scale. Now doing an M.Sc. in CS at Universität Rostock, where that whole arc is pointing toward applied AI.</p>
+        <p>I’m Pragna — started as a frontend engineer, grew into full-stack, then moved into data at TCS where I built analytics pipelines and dashboards on top of Microsoft Graph API. Each step added a layer: UI craft, then backend and systems thinking, then data at scale. Now doing an M.Sc. in CS, where that whole arc is pointing toward applied AI.</p>
         <p>Currently working as a <strong>Werkstudent AI Developer at Baltic Agent Systems UG</strong>, building an AI-assisted ride-planning and dispatch backend — OpenStreetMap routing, regional tariff fare computation, and driver availability scheduling.</p>
         <p>I care about the engineering that makes products survive: logging, tests, observability, deployment, and code review. Those are the real reasons production systems succeed or fail.</p>
       </div>
@@ -574,238 +561,72 @@ footer a { color: var(--accent); }
   <div class="container">
     <div class="sec-head reveal"><span class="num">03.</span><h2>featured work</h2><div class="line"></div></div>
 
-    <div class="featured-grid">
+    <div class="work-list">
 
-      <!-- RAG Portfolio Chatbot -->
-      <article class="featured reveal">
-        <div class="featured-text">
-          <div class="label">Featured / live AI system</div>
-          <h3>Live RAG Chatbot — This Portfolio</h3>
-          <div class="featured-desc">
-            Built a retrieval-augmented generation pipeline from scratch — no LangChain, no LlamaIndex. The chatbot you see on this site chunks a knowledge base on <code>## CHUNK:</code> markers, embeds each chunk into 384-dim vectors via sentence-transformers, retrieves top-k via cosine similarity using NumPy, then streams the LLM response back as Server-Sent Events. Groq (Llama 3.3 70B) handles generation. The whole AI layer is ~200 lines of Python.
+      <div class="work-item reveal">
+        <div class="work-num">01</div>
+        <div class="work-body">
+          <div class="work-meta">
+            <span class="work-type">Live AI system</span>
+            <span class="work-tags">Python · FastAPI · RAG · sentence-transformers · Groq · SSE</span>
           </div>
-          <div class="featured-tags">
-            <span>Python</span><span>FastAPI</span><span>RAG</span><span>sentence-transformers</span><span>Groq</span><span>SSE</span><span>NumPy</span>
-          </div>
-          <div class="featured-links">
-            <a href="#chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Try it live ↑</a>
-          </div>
+          <h3 class="work-title">Live RAG Chatbot — This Portfolio</h3>
+          <p class="work-desc">No-framework RAG from scratch: chunk → embed → cosine similarity → Groq llama-3.3 70B → SSE. No LangChain, no LlamaIndex — ~200 lines of Python. The chat widget on this page runs it live.</p>
+          <a href="#chat" class="work-link">Try it live ↑</a>
         </div>
-        <div class="featured-visual rag-pipeline">
-          <svg id="rag-svg" viewBox="0 0 400 260" width="90%" height="90%" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="rag-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#64ffda" stop-opacity="0.8"/>
-                <stop offset="100%" stop-color="#60a5fa" stop-opacity="0.6"/>
-              </linearGradient>
-            </defs>
-            <!-- KB chunks: 4 rects stacked at x=15 -->
-            <g fill="none" stroke="#64ffda" stroke-width="1.5">
-              <rect class="rag-chunk" x="15" y="28" width="90" height="22" rx="4"/>
-              <rect class="rag-chunk" x="15" y="60" width="90" height="22" rx="4"/>
-              <rect class="rag-chunk" x="15" y="92" width="90" height="22" rx="4"/>
-              <rect class="rag-chunk" x="15" y="124" width="90" height="22" rx="4"/>
-            </g>
-            <text class="rag-chunk" x="60" y="43" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">chunk_01</text>
-            <text class="rag-chunk" x="60" y="75" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">chunk_02</text>
-            <text class="rag-chunk" x="60" y="107" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">chunk_03</text>
-            <text class="rag-chunk" x="60" y="139" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">chunk_04</text>
-            <!-- Fan arrows: chunk right edges (x=107) converging to cosine sim left (x=173, y=112) -->
-            <line class="rag-fan" x1="107" y1="39"  x2="173" y2="112" stroke="#64ffda" stroke-width="1"   opacity="0.6" stroke-dasharray="100" stroke-dashoffset="100"/>
-            <line class="rag-fan" x1="107" y1="71"  x2="173" y2="112" stroke="#64ffda" stroke-width="1.5" opacity="0.9" stroke-dasharray="78"  stroke-dashoffset="78"/>
-            <line class="rag-fan" x1="107" y1="103" x2="173" y2="112" stroke="#64ffda" stroke-width="1"   opacity="0.6" stroke-dasharray="68"  stroke-dashoffset="68"/>
-            <line class="rag-fan" x1="107" y1="135" x2="173" y2="112" stroke="#64ffda" stroke-width="1"   opacity="0.6" stroke-dasharray="72"  stroke-dashoffset="72"/>
-            <!-- Cosine sim box -->
-            <g id="rag-cosine">
-              <rect x="173" y="94" width="82" height="36" rx="6" fill="rgba(100,255,218,0.08)" stroke="#64ffda" stroke-width="1.5"/>
-              <text x="214" y="116" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">cosine sim</text>
-            </g>
-            <!-- Arrow: cosine sim → Groq -->
-            <line id="rag-arrow-groq" x1="257" y1="112" x2="303" y2="90" stroke="url(#rag-grad)" stroke-width="1.5" stroke-dasharray="60" stroke-dashoffset="60"/>
-            <!-- Groq box -->
-            <g id="rag-groq">
-              <rect x="303" y="68" width="78" height="44" rx="6" fill="rgba(96,165,250,0.08)" stroke="#60a5fa" stroke-width="1.5"/>
-              <text x="342" y="88" font-family="JetBrains Mono,monospace" font-size="9" fill="#60a5fa" text-anchor="middle">Groq</text>
-              <text x="342" y="102" font-family="JetBrains Mono,monospace" font-size="8" fill="#60a5fa" text-anchor="middle">llama-3.3</text>
-            </g>
-            <!-- SSE output -->
-            <g id="rag-sse">
-              <text x="200" y="185" font-family="JetBrains Mono,monospace" font-size="10" fill="#8a8a94" text-anchor="middle">→ streamed via SSE</text>
-              <text x="200" y="205" font-family="JetBrains Mono,monospace" font-size="9" fill="#5a5a63" text-anchor="middle">~200 lines · no LangChain</text>
-            </g>
-          </svg>
-        </div>
-      </article>
+      </div>
 
-      <!-- AlphaFold -->
-      <article class="featured reveal">
-        <div class="featured-text">
-          <div class="label">Featured / AI research platform</div>
-          <h3>AlphaFold Web Platform — User Management</h3>
-          <div class="featured-desc">
-            Built the User Management layer for a web-based AlphaFold platform at Universität Rostock. Auth, RBAC, password management with bcrypt, account lockout with countdown, and a real-time dashboard showing researcher tasks (Running / Finished / Failed). The kind of boring, hardened platform layer that makes AI research actually usable.
+      <div class="work-item reveal">
+        <div class="work-num">02</div>
+        <div class="work-body">
+          <div class="work-meta">
+            <span class="work-type">AI research platform</span>
+            <span class="work-tags">Python · Flask · PostgreSQL · bcrypt · RBAC</span>
           </div>
-          <div class="featured-tags">
-            <span>Python</span><span>Flask</span><span>PostgreSQL</span><span>HTML5/CSS3</span><span>bcrypt</span><span>RBAC</span>
-          </div>
-          <div class="featured-links">
-            <a href="#contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 4l8 8 8-8"/></svg>Request details</a>
-          </div>
+          <h3 class="work-title">AlphaFold Web Platform — User Management</h3>
+          <p class="work-desc">User management layer for a bioinformatics platform: auth, RBAC, bcrypt, account lockout with countdown, real-time task dashboard (Running / Finished / Failed). The security layer that makes AI research usable.</p>
+          <a href="#contact" class="work-link">Request details →</a>
         </div>
-        <div class="featured-visual">
-          <svg viewBox="0 0 400 280" width="90%" height="90%" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="af" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#64ffda" stop-opacity="0.8"/>
-                <stop offset="100%" stop-color="#a78bfa" stop-opacity="0.6"/>
-              </linearGradient>
-            </defs>
-            <!-- Protein helix -->
-            <g stroke="url(#af)" stroke-width="2.5" fill="none" opacity="0.85">
-              <path d="M 60 140 Q 100 60 160 140 T 260 140 T 360 140" />
-              <path d="M 60 160 Q 100 80 160 160 T 260 160 T 360 160" opacity="0.6"/>
-              <path d="M 60 120 Q 100 40 160 120 T 260 120 T 360 120" opacity="0.4"/>
-            </g>
-            <!-- nodes -->
-            <g fill="#64ffda">
-              <circle cx="60" cy="140" r="4"/><circle cx="110" cy="90" r="4"/><circle cx="160" cy="140" r="4"/>
-              <circle cx="210" cy="90" r="4"/><circle cx="260" cy="140" r="4"/><circle cx="310" cy="90" r="4"/>
-              <circle cx="360" cy="140" r="4"/>
-            </g>
-            <text x="200" y="235" font-family="JetBrains Mono, monospace" font-size="11" fill="#8a8a94" text-anchor="middle">protein_structure.predict()</text>
-            <text x="200" y="255" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a5a63" text-anchor="middle">// tasks: 1,482 finished</text>
-          </svg>
-        </div>
-      </article>
+      </div>
 
-      <!-- Teams Analytics -->
-      <article class="featured reveal">
-        <div class="featured-text">
-          <div class="label">Featured / data engineering</div>
-          <h3>Microsoft Teams Analytics — TCS</h3>
-          <div class="featured-desc">
-            Built data transformation pipelines on top of Microsoft Graph API, processing telemetry from 10,000+ Teams users and feeding Power BI dashboards for leadership decisions. Surfaced seasonal usage patterns that helped with resource planning. This is the unglamorous data infrastructure that powers actual analytics.
+      <div class="work-item reveal">
+        <div class="work-num">03</div>
+        <div class="work-body">
+          <div class="work-meta">
+            <span class="work-type">Data engineering</span>
+            <span class="work-tags">SQL · Python · Power BI · Databricks · MS Graph API</span>
           </div>
-          <div class="featured-tags">
-            <span>SQL</span><span>Python</span><span>Power BI</span><span>Databricks</span><span>MS Graph API</span>
-          </div>
-          <div class="featured-links">
-            <a href="#contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 4l8 8 8-8"/></svg>Discuss metrics</a>
-          </div>
+          <h3 class="work-title">Microsoft Teams Analytics — TCS</h3>
+          <p class="work-desc">SQL pipelines on Microsoft Graph API, 10,000+ users, feeding executive Power BI dashboards. Surfaced 20% seasonal usage spikes that drove leadership resource decisions.</p>
+          <a href="#contact" class="work-link">Discuss the data model →</a>
         </div>
-        <div class="featured-visual">
-          <svg viewBox="0 0 400 280" width="90%" height="90%" xmlns="http://www.w3.org/2000/svg">
-            <g stroke="#1f1f23" stroke-width="1">
-              <line x1="50" y1="220" x2="370" y2="220"/>
-              <line x1="50" y1="60" x2="50" y2="220"/>
-            </g>
-            <!-- bars -->
-            <g>
-              <rect x="70" y="160" width="28" height="60" fill="#64ffda" opacity="0.85" rx="2"/>
-              <rect x="110" y="130" width="28" height="90" fill="#64ffda" opacity="0.85" rx="2"/>
-              <rect x="150" y="100" width="28" height="120" fill="#a78bfa" opacity="0.85" rx="2"/>
-              <rect x="190" y="80" width="28" height="140" fill="#a78bfa" rx="2"/>
-              <rect x="230" y="110" width="28" height="110" fill="#60a5fa" opacity="0.85" rx="2"/>
-              <rect x="270" y="90" width="28" height="130" fill="#60a5fa" opacity="0.85" rx="2"/>
-              <rect x="310" y="140" width="28" height="80" fill="#60a5fa" opacity="0.85" rx="2"/>
-            </g>
-            <!-- trend line -->
-            <polyline points="84,190 124,170 164,150 204,130 244,150 284,130 324,170" fill="none" stroke="#f472b6" stroke-width="2" stroke-dasharray="4 3"/>
-            <text x="200" y="255" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a5a63" text-anchor="middle">10,000+ users · 20% seasonal spike</text>
-          </svg>
-        </div>
-      </article>
+      </div>
 
-      <!-- Banking SPA -->
-      <article class="featured reveal">
-        <div class="featured-text">
-          <div class="label">Featured / regulated fintech</div>
-          <h3>Banking Self-Service SPA — Bank of America</h3>
-          <div class="featured-desc">
-            Built an Angular SPA for banking self-service. Added JWT auth, session analytics with Glassbox, and a CI/CD pipeline. Real-time event tracking helped catch fraud patterns. This is where I learned that compliance and security aren't afterthoughts — they're how you ship.
+      <div class="work-item reveal">
+        <div class="work-num">04</div>
+        <div class="work-body">
+          <div class="work-meta">
+            <span class="work-type">Regulated fintech</span>
+            <span class="work-tags">Angular · TypeScript · JWT · Glassbox · Jenkins · CI/CD</span>
           </div>
-          <div class="featured-tags">
-            <span>Angular</span><span>TypeScript</span><span>JWT</span><span>Glassbox</span><span>Jenkins</span><span>CI/CD</span>
-          </div>
-          <div class="featured-links">
-            <a href="#contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 4l8 8 8-8"/></svg>Ask about the architecture</a>
-          </div>
+          <h3 class="work-title">Banking Self-Service SPA — Bank of America</h3>
+          <p class="work-desc">Angular SPA for banking self-service at Accenture. JWT auth, session analytics with Glassbox, Jenkins CI/CD. +4% task-completion rate, +12% fraud-detection accuracy.</p>
+          <a href="#contact" class="work-link">Ask about the architecture →</a>
         </div>
-        <div class="featured-visual">
-          <svg viewBox="0 0 400 280" width="90%" height="90%" xmlns="http://www.w3.org/2000/svg">
-            <!-- shield -->
-            <path d="M 200 40 L 280 70 V 150 Q 280 220 200 250 Q 120 220 120 150 V 70 Z" fill="none" stroke="#64ffda" stroke-width="2" opacity="0.6"/>
-            <path d="M 200 60 L 265 85 V 150 Q 265 205 200 230 Q 135 205 135 150 V 85 Z" fill="rgba(100,255,218,0.06)" stroke="#64ffda" stroke-width="1" opacity="0.8"/>
-            <!-- lock -->
-            <rect x="180" y="135" width="40" height="36" rx="3" fill="none" stroke="#a78bfa" stroke-width="2"/>
-            <path d="M 188 135 V 120 Q 188 108 200 108 Q 212 108 212 120 V 135" fill="none" stroke="#a78bfa" stroke-width="2"/>
-            <circle cx="200" cy="152" r="3" fill="#64ffda"/>
-            <text x="200" y="265" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a5a63" text-anchor="middle">+12% fraud-detection · JWT · RBAC</text>
-          </svg>
-        </div>
-      </article>
+      </div>
 
-      <!-- RAG Testing Harness -->
-      <article class="featured reveal">
-        <div class="featured-text">
-          <div class="label">Featured / testing infrastructure for AI</div>
-          <h3>Regression-Testing Harness for RAG Pipelines</h3>
-          <div class="featured-desc">
-            Most RAG demos have no idea whether they're actually correct. I built a harness that separates retrieval accuracy from generation accuracy, tracks both against a baseline, and fails the run — like a CI pipeline — when either regresses. The same instinct that got me to 75% Jest coverage at Accenture, applied to AI systems instead of web apps.
+      <div class="work-item reveal">
+        <div class="work-num">05</div>
+        <div class="work-body">
+          <div class="work-meta">
+            <span class="work-type">Testing infrastructure for AI</span>
+            <span class="work-tags">Python · PyYAML · Retrieval Eval · CI</span>
           </div>
-          <div class="featured-tags">
-            <span>Python</span><span>PyYAML</span><span>Regression Testing</span><span>Retrieval Eval</span><span>CI-style Testing</span>
-          </div>
-          <div class="featured-links">
-            <a href="#contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 4l8 8 8-8"/></svg>See the approach</a>
-          </div>
-          <div class="featured-tags" style="margin-top:4px;color:var(--text-dim);font-size:11px;">
-            <span>recall@k</span><span>·</span><span>precision@k</span><span>·</span><span>latency p95</span><span>·</span><span>answer accuracy</span>
-          </div>
+          <h3 class="work-title">Regression-Testing Harness for RAG Pipelines</h3>
+          <p class="work-desc">Separates retrieval accuracy from generation accuracy, tracks both against a baseline, fails the run when either regresses. CI discipline applied to AI systems — recall@k, precision@k, latency p95, answer accuracy.</p>
+          <a href="#contact" class="work-link">See the approach →</a>
         </div>
-        <div class="featured-visual">
-          <svg viewBox="0 0 400 280" width="90%" height="90%" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="ci" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#64ffda" stop-opacity="0.9"/>
-                <stop offset="100%" stop-color="#a78bfa" stop-opacity="0.8"/>
-              </linearGradient>
-            </defs>
-            <!-- pipeline stages -->
-            <rect x="20" y="100" width="80" height="36" rx="5" fill="rgba(100,255,218,0.07)" stroke="#64ffda" stroke-width="1.5"/>
-            <text x="60" y="120" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">retrieval</text>
-            <text x="60" y="132" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">eval</text>
-            <line x1="100" y1="118" x2="130" y2="118" stroke="url(#ci)" stroke-width="1.5" marker-end="url(#arr)"/>
-            <rect x="130" y="100" width="80" height="36" rx="5" fill="rgba(167,139,250,0.07)" stroke="#a78bfa" stroke-width="1.5"/>
-            <text x="170" y="120" font-family="JetBrains Mono,monospace" font-size="9" fill="#a78bfa" text-anchor="middle">generation</text>
-            <text x="170" y="132" font-family="JetBrains Mono,monospace" font-size="9" fill="#a78bfa" text-anchor="middle">eval</text>
-            <line x1="210" y1="118" x2="240" y2="118" stroke="url(#ci)" stroke-width="1.5"/>
-            <rect x="240" y="100" width="80" height="36" rx="5" fill="rgba(96,165,250,0.07)" stroke="#60a5fa" stroke-width="1.5"/>
-            <text x="280" y="120" font-family="JetBrains Mono,monospace" font-size="9" fill="#60a5fa" text-anchor="middle">baseline</text>
-            <text x="280" y="132" font-family="JetBrains Mono,monospace" font-size="9" fill="#60a5fa" text-anchor="middle">compare</text>
-            <line x1="320" y1="118" x2="350" y2="118" stroke="url(#ci)" stroke-width="1.5"/>
-            <!-- pass/fail gate -->
-            <rect x="350" y="104" width="34" height="28" rx="4" fill="rgba(39,201,63,0.1)" stroke="#27c93f" stroke-width="1.5"/>
-            <text x="367" y="122" font-family="JetBrains Mono,monospace" font-size="9" fill="#27c93f" text-anchor="middle">PASS</text>
-            <!-- metric bars -->
-            <text x="60" y="75" font-family="JetBrains Mono,monospace" font-size="8" fill="#5a5a63" text-anchor="middle">recall@k</text>
-            <rect x="30" y="78" width="60" height="6" rx="2" fill="rgba(100,255,218,0.12)" stroke="#1f1f23" stroke-width="1"/>
-            <rect x="30" y="78" width="49" height="6" rx="2" fill="#64ffda" opacity="0.7"/>
-            <text x="170" y="75" font-family="JetBrains Mono,monospace" font-size="8" fill="#5a5a63" text-anchor="middle">answer acc.</text>
-            <rect x="140" y="78" width="60" height="6" rx="2" fill="rgba(167,139,250,0.12)" stroke="#1f1f23" stroke-width="1"/>
-            <rect x="140" y="78" width="42" height="6" rx="2" fill="#a78bfa" opacity="0.7"/>
-            <text x="280" y="75" font-family="JetBrains Mono,monospace" font-size="8" fill="#5a5a63" text-anchor="middle">latency p95</text>
-            <rect x="250" y="78" width="60" height="6" rx="2" fill="rgba(96,165,250,0.12)" stroke="#1f1f23" stroke-width="1"/>
-            <rect x="250" y="78" width="38" height="6" rx="2" fill="#60a5fa" opacity="0.7"/>
-            <!-- baseline diff lines -->
-            <line x1="60" y1="160" x2="60" y2="200" stroke="#1f1f23" stroke-width="1" stroke-dasharray="3 3"/>
-            <line x1="170" y1="160" x2="170" y2="200" stroke="#1f1f23" stroke-width="1" stroke-dasharray="3 3"/>
-            <line x1="280" y1="160" x2="280" y2="200" stroke="#1f1f23" stroke-width="1" stroke-dasharray="3 3"/>
-            <text x="200" y="220" font-family="JetBrains Mono,monospace" font-size="9" fill="#5a5a63" text-anchor="middle">delta vs baseline · fail if regressed</text>
-            <text x="200" y="248" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#64ffda" text-anchor="middle">retrieval ≠ generation — measured separately</text>
-          </svg>
-        </div>
-      </article>
+      </div>
 
     </div>
 
@@ -1096,8 +917,6 @@ footer a { color: var(--accent); }
   <a href="mailto:p.urs.mysore@gmail.com">p.urs.mysore@gmail.com →</a>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
 <script>
 /* ==== YEAR ==== */
 document.getElementById('yr').textContent = new Date().getFullYear();
@@ -1118,27 +937,6 @@ toggle.addEventListener('click', () => {
 links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
   toggle.classList.remove('active'); links.classList.remove('open');
 }));
-
-/* ==== TYPING ANIMATION ==== */
-const phrases = [
-  "Full Stack Engineer · 4.5y",
-  "Python · FastAPI · AI Systems",
-  "M.Sc. CS @ Uni Rostock"
-];
-const typeEl = document.getElementById('type');
-let pi = 0, ci = 0, deleting = false;
-function tick() {
-  const p = phrases[pi];
-  if (!deleting) {
-    typeEl.textContent = p.slice(0, ++ci);
-    if (ci === p.length) { deleting = true; setTimeout(tick, 1600); return; }
-  } else {
-    typeEl.textContent = p.slice(0, --ci);
-    if (ci === 0) { deleting = false; pi = (pi + 1) % phrases.length; }
-  }
-  setTimeout(tick, deleting ? 35 : 65);
-}
-tick();
 
 /* ==== SCROLL REVEAL ==== */
 const io = new IntersectionObserver((entries) => {
@@ -1352,62 +1150,6 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
   sug.forEach(b => b.addEventListener('click', () => ask(b.dataset.q)));
 })();
 
-/* ==== ASK-ME CYCLING TEXT ==== */
-(() => {
-  const phrases = [
-    'Ask me: why RAG over fine-tuning?',
-    'Ask me: tell me about AlphaFold',
-    'Ask me: why did you move to Rostock?'
-  ];
-  let idx = 0;
-  const el   = document.getElementById('ask-prompt');
-  const wrap = document.getElementById('ask-cycling');
-  if (!el || !wrap) return;
-
-  setInterval(() => { idx = (idx + 1) % phrases.length; el.textContent = phrases[idx]; }, 3200);
-
-  function openChat() {
-    const panel = document.getElementById('chatbot');
-    const fab   = document.getElementById('chat-fab');
-    if (panel && !panel.classList.contains('open')) {
-      panel.classList.add('open');
-      if (fab) fab.style.display = 'none';
-      const inp = document.getElementById('chat-input');
-      if (inp) setTimeout(() => inp.focus(), 120);
-    }
-  }
-  wrap.addEventListener('click', openChat);
-  wrap.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openChat(); } });
-})();
-
-/* ==== GSAP RAG PIPELINE ANIMATION ==== */
-(() => {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  function initRag() {
-    if (typeof gsap === 'undefined') return;
-    gsap.registerPlugin(ScrollTrigger);
-
-    gsap.set('.rag-chunk',       { opacity: 0 });
-    gsap.set('.rag-fan',         { strokeDashoffset: (i) => [100, 78, 68, 72][i], opacity: 0 });
-    gsap.set('#rag-cosine',      { opacity: 0 });
-    gsap.set('#rag-arrow-groq',  { strokeDashoffset: 60, opacity: 0 });
-    gsap.set('#rag-groq',        { opacity: 0 });
-    gsap.set('#rag-sse',         { opacity: 0 });
-
-    const tl = gsap.timeline({
-      scrollTrigger: { trigger: '#rag-svg', start: 'top 80%', once: true },
-      defaults: { ease: 'power2.out' }
-    });
-
-    tl.to('.rag-chunk',      { opacity: 0.85, duration: 0.35, stagger: 0.12 })
-      .to('.rag-fan',        { strokeDashoffset: 0, opacity: 0.7, duration: 0.5, stagger: 0.1 }, '-=0.1')
-      .to('#rag-cosine',     { opacity: 1, duration: 0.4 }, '-=0.2')
-      .to('#rag-arrow-groq', { strokeDashoffset: 0, opacity: 0.85, duration: 0.45 }, '+=0.1')
-      .to('#rag-groq',       { opacity: 1, duration: 0.4 }, '-=0.15')
-      .to('#rag-sse',        { opacity: 1, duration: 0.5 }, '+=0.1');
-  }
-  window.addEventListener('load', initRag);
-})();
 </script>
 </body>
 </html>
