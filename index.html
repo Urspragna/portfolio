@@ -4,11 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Pragna Urs — Full Stack Dev · RAG/AI · FastAPI</title>
-<meta name="description" content="Pragna Urs Mysore Gopal — Full Stack Dev · Python · Angular · FastAPI · RAG/AI. 4.5y production engineering · M.Sc. CS @ Universität Rostock · Werkstudent/HiWi open. Live RAG chatbot on this site." />
+<meta name="description" content="Pragna Urs Mysore Gopal — Full Stack Dev · Python · Angular · FastAPI · RAG/AI. 4.5y production engineering · AI Developer @ Baltic Agent Systems · M.Sc. CS @ Universität Rostock · open to new opportunities. Live RAG chatbot on this site." />
 <meta name="author" content="Pragna Urs Mysore Gopal" />
-<meta name="keywords" content="engineer, RAG, FastAPI, Python, machine learning, full stack, Werkstudent, HiWi, Rostock, Germany" />
-<meta property="og:title" content="Pragna Urs — Full Stack Dev · RAG/AI · FastAPI · Werkstudent/HiWi Open" />
-<meta property="og:description" content="A portfolio with working backend demos: retrieval chatbot, live demos, Python · FastAPI · sentence-transformers." />
+<meta name="keywords" content="engineer, RAG, FastAPI, Python, machine learning, full stack, Werkstudent, Rostock, Germany, Baltic Agent Systems" />
+<meta property="og:title" content="Pragna Urs — AI Developer · Full Stack · RAG/AI · FastAPI" />
+<meta property="og:description" content="AI Developer @ Baltic Agent Systems · 4.5y engineering across fintech, retail, telecom · M.Sc. CS · RAG chatbot live on this site." />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta property="og:type" content="website" />
@@ -110,6 +110,8 @@ section { padding: 120px 0; position: relative; }
 .hero h2 { font-size: clamp(22px, 4vw, 40px); font-weight: 600; color: var(--text-muted); margin-bottom: 28px; letter-spacing: -.02em; min-height: 1.2em; }
 .hero h2 .cursor { display: inline-block; width: 3px; background: var(--accent); animation: blink 1.05s step-end infinite; margin-left: 4px; vertical-align: baseline; height: 1em; transform: translateY(4px); }
 @keyframes blink { 50% { opacity: 0; } }
+.hero-greet .cursor { display: inline-block; width: 2px; height: 0.85em; background: var(--accent); animation: blink 1.05s step-end infinite; margin-left: 3px; vertical-align: middle; }
+.about-card .code-cursor { display: inline-block; width: 7px; height: 1em; background: var(--accent); animation: blink 1.2s step-end infinite; vertical-align: text-bottom; opacity: 0.8; }
 .hero p { max-width: 620px; font-size: 17px; color: var(--text-muted); margin-bottom: 40px; }
 .hero p code { font-family: var(--mono); font-size: 14px; color: var(--accent); background: rgba(100,255,218,.07); padding: 2px 7px; border-radius: 4px; border: 1px solid rgba(100,255,218,.18); }
 .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
@@ -154,7 +156,8 @@ section { padding: 120px 0; position: relative; }
 .about-card .header .y { background: #ffbd2e; }
 .about-card .header .g { background: #27c93f; }
 .about-card .header .t { color: var(--text-dim); margin-left: 12px; font-size: 12px; }
-.about-card pre { color: var(--text-muted); line-height: 1.8; white-space: pre-wrap; }
+.about-card pre { color: var(--text-muted); line-height: 1.8; white-space: pre-wrap; overflow-x: auto; }
+@media (max-width: 540px) { .about-card { font-size: 11.5px; padding: 18px; } .about-card pre { font-size: 11px; } }
 .about-card .kw { color: var(--accent-2); }
 .about-card .str { color: var(--accent); }
 .about-card .fn { color: var(--accent-3); }
@@ -370,7 +373,7 @@ footer a { color: var(--accent); }
 <!-- HERO -->
 <section class="hero" id="top">
   <div class="container">
-    <div class="hero-greet reveal">$ whoami</div>
+    <div class="hero-greet reveal">$ whoami<span class="cursor"></span></div>
     <h1 class="reveal d1">Pragna Urs<br/><span class="accent">Mysore Gopal.</span></h1>
     <h2 class="reveal d2"><span id="type"></span><span class="cursor"></span></h2>
     <p class="reveal d3">
@@ -387,7 +390,7 @@ footer a { color: var(--accent); }
       </a>
     </div>
     <div class="hero-meta reveal d3">
-      <span><span class="k">status</span> <span class="v" style="color:var(--accent)">● available for roles in Germany</span></span>
+      <span><span class="k">status</span> <span class="v" style="color:var(--accent)">● AI Developer @ Baltic Agent Systems — open to new opportunities</span></span>
       <span><span class="k">location</span> <span class="v">Rostock, DE</span></span>
       <span><span class="k">focus</span> <span class="v">Full-Stack · RAG/AI · FastAPI</span></span>
       <span><span class="k">system</span> <span class="v" id="sys-status" style="color:var(--text-dim)">checking…</span></span>
@@ -427,7 +430,7 @@ footer a { color: var(--accent); }
         ]
 
     <span class="kw">def</span> <span class="fn">status</span>(self):
-        <span class="kw">return</span> <span class="str">"Werkstudent — employed"</span></pre>
+        <span class="kw">return</span> <span class="str">"Werkstudent — employed"</span><span class="code-cursor"></span></pre>
       </div>
     </div>
   </div>
@@ -698,6 +701,68 @@ footer a { color: var(--accent); }
         </div>
       </article>
 
+      <!-- RAG Testing Harness -->
+      <article class="featured reveal">
+        <div class="featured-text">
+          <div class="label">Featured / testing infrastructure for AI</div>
+          <h3>Regression-Testing Harness for RAG Pipelines</h3>
+          <div class="featured-desc">
+            Most RAG demos have no idea whether they're actually correct. I built a harness that separates retrieval accuracy from generation accuracy, tracks both against a baseline, and fails the run — like a CI pipeline — when either regresses. The same instinct that got me to 75% Jest coverage at Accenture, applied to AI systems instead of web apps.
+          </div>
+          <div class="featured-tags">
+            <span>Python</span><span>PyYAML</span><span>Regression Testing</span><span>Retrieval Eval</span><span>CI-style Testing</span>
+          </div>
+          <div class="featured-links">
+            <a href="#contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 4l8 8 8-8"/></svg>See the approach</a>
+          </div>
+          <div class="featured-tags" style="margin-top:4px;color:var(--text-dim);font-size:11px;">
+            <span>recall@k</span><span>·</span><span>precision@k</span><span>·</span><span>latency p95</span><span>·</span><span>answer accuracy</span>
+          </div>
+        </div>
+        <div class="featured-visual">
+          <svg viewBox="0 0 400 280" width="90%" height="90%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="ci" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#64ffda" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#a78bfa" stop-opacity="0.8"/>
+              </linearGradient>
+            </defs>
+            <!-- pipeline stages -->
+            <rect x="20" y="100" width="80" height="36" rx="5" fill="rgba(100,255,218,0.07)" stroke="#64ffda" stroke-width="1.5"/>
+            <text x="60" y="120" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">retrieval</text>
+            <text x="60" y="132" font-family="JetBrains Mono,monospace" font-size="9" fill="#64ffda" text-anchor="middle">eval</text>
+            <line x1="100" y1="118" x2="130" y2="118" stroke="url(#ci)" stroke-width="1.5" marker-end="url(#arr)"/>
+            <rect x="130" y="100" width="80" height="36" rx="5" fill="rgba(167,139,250,0.07)" stroke="#a78bfa" stroke-width="1.5"/>
+            <text x="170" y="120" font-family="JetBrains Mono,monospace" font-size="9" fill="#a78bfa" text-anchor="middle">generation</text>
+            <text x="170" y="132" font-family="JetBrains Mono,monospace" font-size="9" fill="#a78bfa" text-anchor="middle">eval</text>
+            <line x1="210" y1="118" x2="240" y2="118" stroke="url(#ci)" stroke-width="1.5"/>
+            <rect x="240" y="100" width="80" height="36" rx="5" fill="rgba(96,165,250,0.07)" stroke="#60a5fa" stroke-width="1.5"/>
+            <text x="280" y="120" font-family="JetBrains Mono,monospace" font-size="9" fill="#60a5fa" text-anchor="middle">baseline</text>
+            <text x="280" y="132" font-family="JetBrains Mono,monospace" font-size="9" fill="#60a5fa" text-anchor="middle">compare</text>
+            <line x1="320" y1="118" x2="350" y2="118" stroke="url(#ci)" stroke-width="1.5"/>
+            <!-- pass/fail gate -->
+            <rect x="350" y="104" width="34" height="28" rx="4" fill="rgba(39,201,63,0.1)" stroke="#27c93f" stroke-width="1.5"/>
+            <text x="367" y="122" font-family="JetBrains Mono,monospace" font-size="9" fill="#27c93f" text-anchor="middle">PASS</text>
+            <!-- metric bars -->
+            <text x="60" y="75" font-family="JetBrains Mono,monospace" font-size="8" fill="#5a5a63" text-anchor="middle">recall@k</text>
+            <rect x="30" y="78" width="60" height="6" rx="2" fill="rgba(100,255,218,0.12)" stroke="#1f1f23" stroke-width="1"/>
+            <rect x="30" y="78" width="49" height="6" rx="2" fill="#64ffda" opacity="0.7"/>
+            <text x="170" y="75" font-family="JetBrains Mono,monospace" font-size="8" fill="#5a5a63" text-anchor="middle">answer acc.</text>
+            <rect x="140" y="78" width="60" height="6" rx="2" fill="rgba(167,139,250,0.12)" stroke="#1f1f23" stroke-width="1"/>
+            <rect x="140" y="78" width="42" height="6" rx="2" fill="#a78bfa" opacity="0.7"/>
+            <text x="280" y="75" font-family="JetBrains Mono,monospace" font-size="8" fill="#5a5a63" text-anchor="middle">latency p95</text>
+            <rect x="250" y="78" width="60" height="6" rx="2" fill="rgba(96,165,250,0.12)" stroke="#1f1f23" stroke-width="1"/>
+            <rect x="250" y="78" width="38" height="6" rx="2" fill="#60a5fa" opacity="0.7"/>
+            <!-- baseline diff lines -->
+            <line x1="60" y1="160" x2="60" y2="200" stroke="#1f1f23" stroke-width="1" stroke-dasharray="3 3"/>
+            <line x1="170" y1="160" x2="170" y2="200" stroke="#1f1f23" stroke-width="1" stroke-dasharray="3 3"/>
+            <line x1="280" y1="160" x2="280" y2="200" stroke="#1f1f23" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="200" y="220" font-family="JetBrains Mono,monospace" font-size="9" fill="#5a5a63" text-anchor="middle">delta vs baseline · fail if regressed</text>
+            <text x="200" y="248" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#64ffda" text-anchor="middle">retrieval ≠ generation — measured separately</text>
+          </svg>
+        </div>
+      </article>
+
     </div>
 
     <!-- MINI PROJECTS -->
@@ -884,7 +949,7 @@ footer a { color: var(--accent); }
         <div class="tag-title">LANGUAGES</div>
         <h4>English — C1 <span style="color:var(--text-muted);font-weight:400;font-size:13px">(Advanced)</span></h4>
         <div class="divider" style="margin:12px 0"></div>
-        <h4>German — A2 <span style="color:var(--text-muted);font-weight:400;font-size:13px">(actively learning)</span></h4>
+        <h4>German — A1 <span style="color:var(--text-muted);font-weight:400;font-size:13px">(actively learning)</span></h4>
         <div class="divider" style="margin:12px 0"></div>
         <h4>Hindi — B2</h4>
         <div class="divider" style="margin:12px 0"></div>
@@ -912,7 +977,7 @@ footer a { color: var(--accent); }
   <div class="container">
     <div class="num-label reveal">06. what's next</div>
     <h2 class="reveal d1">Let's build<br/>something intelligent.</h2>
-    <p class="reveal d2">Open to <strong>Werkstudent</strong> and <strong>HiWi</strong> roles in Germany, especially with applied software and production engineering. I reply fast and prefer concise written outreach.</p>
+    <p class="reveal d2">Currently working as an <strong>AI Developer at Baltic Agent Systems</strong> — and open to additional <strong>Werkstudent</strong> or <strong>HiWi</strong> opportunities in Germany, especially in applied software and production engineering. I reply fast and prefer concise written outreach.</p>
     <a class="btn btn-primary reveal d2" href="mailto:p.urs.mysore@gmail.com">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h16v16H4z"/><path d="M4 4l8 8 8-8"/></svg>
       Say hello
@@ -1177,6 +1242,17 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
     const botEl = bubble('bot', '');
     botEl.textContent = '…';
 
+    // cold-start indicator: if no response in 4s, warn the user
+    let wakeTimer = setTimeout(() => {
+      if (botEl.textContent === '…') {
+        botEl.textContent = '';
+        const wakeEl = document.createElement('div');
+        wakeEl.style.cssText = 'font-family:var(--mono);font-size:11px;color:var(--text-dim);line-height:1.6';
+        wakeEl.innerHTML = '⏳ waking up… cold starts can take ~20s on Railway.<br><span style="color:var(--text-dim);font-size:10px">hang tight, the model is loading</span>';
+        botEl.appendChild(wakeEl);
+      }
+    }, 4000);
+
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
@@ -1185,6 +1261,7 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
       });
       if (!res.ok || !res.body) throw new Error('bad response');
 
+      clearTimeout(wakeTimer);
       const reader = res.body.getReader();
       const dec = new TextDecoder();
       let buffer = '', answer = '', citations = [];
@@ -1215,10 +1292,9 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
         }
       }
     } catch (e) {
+      clearTimeout(wakeTimer);
       botEl.textContent = '';
-      const sys = system(
-        'Backend offline. Start it locally: <code style="font-family:var(--mono);color:var(--accent)">uvicorn app.main:app</code> · or read the README for deployment options.'
-      );
+      system('Backend offline or still waking up — try again in a moment.');
       botEl.remove();
     } finally {
       send.disabled = false;
