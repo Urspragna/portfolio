@@ -59,19 +59,21 @@ async def chat(
 
     async def event_stream() -> AsyncIterator[bytes]:
         t0 = time.perf_counter()
-        # Citations first, so UI shows retrieval before LLM starts
         yield _sse("citations", {"citations": citations})
 
         chunks: list[str] = []
-        async for tok in llm.stream(prompt):
-            chunks.append(tok)
-            yield _sse("token", {"text": tok})
+        try:
+            async for tok in llm.stream(prompt):
+                chunks.append(tok)
+                yield _sse("token", {"text": tok})
+        except Exception as exc:
+            print(f"[chat] LLM stream error ({type(exc).__name__}): {exc}")
+            yield _sse("error", {"message": "Model unavailable — try again in a moment."})
+            return
 
         latency_ms = int((time.perf_counter() - t0) * 1000)
         full_answer = "".join(chunks)
 
-        # Log the turn (anonymously, best-effort) — use the *cleaned* question
-        # so we never persist obvious injection text into our own DB.
         await _try_log_conversation(
             question=cleaned[:2000],
             answer=full_answer[:8000],

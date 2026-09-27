@@ -615,19 +615,6 @@ footer a { color: var(--accent); }
         </div>
       </div>
 
-      <div class="work-item reveal">
-        <div class="work-num">05</div>
-        <div class="work-body">
-          <div class="work-meta">
-            <span class="work-type">Testing infrastructure for AI</span>
-            <span class="work-tags">Python · PyYAML · Retrieval Eval · CI</span>
-          </div>
-          <h3 class="work-title">Regression-Testing Harness for RAG Pipelines</h3>
-          <p class="work-desc">Separates retrieval accuracy from generation accuracy, tracks both against a baseline, fails the run when either regresses. CI discipline applied to AI systems — recall@k, precision@k, latency p95, answer accuracy.</p>
-          <a href="#contact" class="work-link">See the approach →</a>
-        </div>
-      </div>
-
     </div>
 
     <!-- MINI PROJECTS -->
@@ -1125,6 +1112,7 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
           const data = JSON.parse(dt);
           if (ev === 'citations') citations = data.citations || [];
           if (ev === 'token')     { answer += data.text; botEl.textContent = answer; body.scrollTop = body.scrollHeight; }
+          if (ev === 'error')     { clearTimeout(wakeTimer); system(data.message || 'Something went wrong — try again.'); botEl.remove(); }
           if (ev === 'done') {
             if (citations.length) {
               const c = document.createElement('div');
@@ -1135,6 +1123,7 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
           }
         }
       }
+      if (!answer) { system('No response — try again in a moment.'); botEl.remove(); }
     } catch (e) {
       clearTimeout(wakeTimer);
       botEl.textContent = '';
