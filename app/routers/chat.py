@@ -67,8 +67,9 @@ async def chat(
                 chunks.append(tok)
                 yield _sse("token", {"text": tok})
         except Exception as exc:
-            print(f"[chat] LLM stream error ({type(exc).__name__}): {exc}")
-            yield _sse("error", {"message": "Model unavailable — try again in a moment."})
+            detail = f"{type(exc).__name__}: {str(exc)[:300]}"
+            print(f"[chat] LLM stream error: {detail}")
+            yield _sse("error", {"message": detail})
             return
 
         latency_ms = int((time.perf_counter() - t0) * 1000)
