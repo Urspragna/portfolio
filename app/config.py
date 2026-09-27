@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     anthropic_api_key: str | None = None
     anthropic_model: str = "claude-haiku-4-5-20251001"
     groq_api_key: str | None = None
-    groq_model: str = "llama-3.3-70b-versatile"
+    groq_model: str = "llama3-70b-8192"
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "llama3.2"
 
