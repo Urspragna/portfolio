@@ -1098,6 +1098,7 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
       let buffer = '', answer = '', citations = [];
 
       botEl.textContent = '';
+      let errored = false;
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -1112,7 +1113,7 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
           const data = JSON.parse(dt);
           if (ev === 'citations') citations = data.citations || [];
           if (ev === 'token')     { answer += data.text; botEl.textContent = answer; body.scrollTop = body.scrollHeight; }
-          if (ev === 'error')     { clearTimeout(wakeTimer); system(data.message || 'Something went wrong — try again.'); botEl.remove(); }
+          if (ev === 'error')     { clearTimeout(wakeTimer); errored = true; system(data.message || 'Something went wrong — try again.'); botEl.remove(); }
           if (ev === 'done') {
             if (citations.length) {
               const c = document.createElement('div');
@@ -1123,7 +1124,7 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
           }
         }
       }
-      if (!answer) { system('No response — try again in a moment.'); botEl.remove(); }
+      if (!answer && !errored) { system('No response — try again in a moment.'); botEl.remove(); }
     } catch (e) {
       clearTimeout(wakeTimer);
       botEl.textContent = '';

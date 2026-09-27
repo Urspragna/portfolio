@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     # LLM provider
     llm_provider: Literal["anthropic", "groq", "ollama", "echo"] = "echo"
     anthropic_api_key: str | None = None
-    anthropic_model: str = "claude-sonnet-4-6"
+    anthropic_model: str = "claude-haiku-4-5-20251001"
     groq_api_key: str | None = None
     groq_model: str = "llama-3.3-70b-versatile"
     ollama_base_url: str = "http://localhost:11434"
