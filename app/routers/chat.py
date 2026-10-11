@@ -69,7 +69,7 @@ async def chat(
         except Exception as exc:
             detail = f"{type(exc).__name__}: {str(exc)[:300]}"
             print(f"[chat] LLM stream error: {detail}")
-            yield _sse("error", {"message": detail})
+            yield _sse("error", {"message": "The assistant is unavailable right now. Please try again in a moment."})
             return
 
         latency_ms = int((time.perf_counter() - t0) * 1000)

@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Pragna Urs — Python Full Stack · AI Systems</title>
-<meta name="description" content="Pragna Urs Mysore Gopal — Full Stack Dev · Python · Angular · FastAPI · RAG/AI. 4.5y production engineering · AI Developer @ Baltic Agent Systems · M.Sc. CS @ Universität Rostock · open to new opportunities. Live RAG chatbot on this site." />
+<title>Pragna Urs — AI &amp; Data Engineer · Full-Stack Developer</title>
+<meta name="description" content="Pragna Urs Mysore Gopal — AI &amp; Data Engineer and Full-Stack Developer (Python · Angular · FastAPI · RAG). 4.5 years of production engineering for Bank of America, GE, AT&amp;T and Microsoft. M.Sc. Computer Science @ Universität Rostock. Open to Werkstudent, internship and junior roles." />
 <meta name="author" content="Pragna Urs Mysore Gopal" />
 <meta name="keywords" content="engineer, RAG, FastAPI, Python, machine learning, full stack, Werkstudent, Rostock, Germany, Baltic Agent Systems" />
-<meta property="og:title" content="Pragna Urs — AI Developer · Full Stack · RAG/AI · FastAPI" />
-<meta property="og:description" content="AI Developer @ Baltic Agent Systems · 4.5y engineering across fintech, retail, telecom · M.Sc. CS · RAG chatbot live on this site." />
+<meta property="og:title" content="Pragna Urs — AI &amp; Data Engineer · Full-Stack Developer" />
+<meta property="og:description" content="4.5 years of production engineering · M.Sc. Computer Science @ Universität Rostock · AI, data and full-stack projects · live RAG chatbot on this site" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta property="og:type" content="website" />
@@ -360,6 +360,12 @@ footer a { color: var(--accent); }
   #chatbot { width: calc(100vw - 16px); height: calc(100vh - 80px); right: 8px; bottom: 8px; }
   #chat-fab { bottom: 16px; right: 16px; padding: 12px 18px; font-size: 12px; }
 }
+
+.work-filter { display: flex; gap: 10px; flex-wrap: wrap; margin: -8px 0 28px; }
+.wf-btn { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--text-dim); background: transparent; color: var(--text-muted); cursor: pointer; }
+.wf-btn:hover { color: var(--text); border-color: var(--text-muted); }
+.wf-btn.active { color: var(--accent); border-color: var(--accent); }
+.work-item.wf-hidden, .mini.wf-hidden { display: none; }
 </style>
 </head>
 <body>
@@ -390,11 +396,12 @@ footer a { color: var(--accent); }
 <!-- HERO -->
 <section class="hero" id="top">
   <div class="container">
-    <div class="hero-eyebrow reveal">AI Developer · Full Stack Engineer · Python</div>
+    <div class="hero-eyebrow reveal">AI &amp; Data Engineer · Full-Stack Developer · Python · Angular</div>
     <h1 class="reveal d1">PRAGNA URS<br><span class="hero-name-dim">MYSORE GOPAL.</span></h1>
     <p class="reveal d2">
-      4.5 years building full-stack products across fintech, retail, and telecom.
-      Now focused on RAG systems, LLM pipelines, and production Python backends.
+      4.5 years building production software for Bank of America, GE, AT&amp;T and Microsoft:
+      full-stack apps, data pipelines and dashboards. Now an M.Sc. Computer Science student
+      building AI systems with LLMs and RAG.
     </p>
     <div class="hero-cta reveal d3">
       <a class="btn btn-primary" href="#work">
@@ -407,7 +414,8 @@ footer a { color: var(--accent); }
       </a>
     </div>
     <div class="hero-meta reveal d3">
-      <span><span class="v" style="color:var(--accent)">● Open to new opportunities</span></span>
+      <span><span class="v" style="color:var(--accent)">● Open to Werkstudent, internship &amp; junior roles</span></span>
+      <span><span class="k">availability</span> <span class="v">up to 20 h/week · full-time internships</span></span>
       <span><span class="k">location</span> <span class="v">Rostock, DE</span></span>
       <span><span class="k">system</span> <span class="v" id="sys-status" style="color:var(--text-dim)">checking…</span></span>
     </div>
@@ -423,7 +431,6 @@ footer a { color: var(--accent); }
       <div class="about-photo reveal">
         <div class="photo-placeholder">
           <span class="photo-initials">PU</span>
-          <span class="photo-label">photo coming soon</span>
         </div>
       </div>
       <div class="about-text reveal">
@@ -438,7 +445,7 @@ footer a { color: var(--accent); }
         </div>
 <pre><span class="kw">class</span> <span class="fn">Pragna</span>:
     <span class="kw">def</span> <span class="fn">__init__</span>(self):
-        self.role      = <span class="str">"Full-Stack Eng."</span>
+        self.role      = <span class="str">"AI &amp; Data Eng. · Full-Stack"</span>
         self.location  = <span class="str">"Rostock, DE"</span>
         self.degree    = <span class="str">"M.Sc. CS — Uni Rostock"</span>
         self.experience = <span class="num">4.5</span>  <span class="cm"># years</span>
@@ -446,13 +453,13 @@ footer a { color: var(--accent); }
 
     <span class="kw">def</span> <span class="fn">currently</span>(self):
         <span class="kw">return</span> [
-            <span class="str">"AI Developer @ Baltic Agent Systems"</span>,
-            <span class="str">"M.Sc. CS coursework"</span>,
-            <span class="str">"shipping production-ready code"</span>,
+            <span class="str">"M.Sc. CS: AI, ML, distributed systems"</span>,
+            <span class="str">"building RAG &amp; LLM projects"</span>,
+            <span class="str">"learning German (A2)"</span>,
         ]
 
     <span class="kw">def</span> <span class="fn">status</span>(self):
-        <span class="kw">return</span> <span class="str">"Werkstudent — employed"</span><span class="code-cursor"></span></pre>
+        <span class="kw">return</span> <span class="str">"open to Werkstudent · internship · junior roles"</span><span class="code-cursor"></span></pre>
       </div>
     </div>
   </div>
@@ -559,10 +566,16 @@ footer a { color: var(--accent); }
 <section id="work">
   <div class="container">
     <div class="sec-head reveal"><span class="num">03.</span><h2>featured work</h2><div class="line"></div></div>
+    <div class="work-filter reveal" role="group" aria-label="Filter projects by area">
+      <button class="wf-btn active" data-filter="all">All</button>
+      <button class="wf-btn" data-filter="ai">AI / ML</button>
+      <button class="wf-btn" data-filter="data">Data</button>
+      <button class="wf-btn" data-filter="software">Software</button>
+    </div>
 
     <div class="work-list">
 
-      <div class="work-item reveal">
+      <div class="work-item reveal" data-cat="ai software">
         <div class="work-num">01</div>
         <div class="work-body">
           <div class="work-meta">
@@ -575,7 +588,7 @@ footer a { color: var(--accent); }
         </div>
       </div>
 
-      <div class="work-item reveal">
+      <div class="work-item reveal" data-cat="software">
         <div class="work-num">02</div>
         <div class="work-body">
           <div class="work-meta">
@@ -588,7 +601,7 @@ footer a { color: var(--accent); }
         </div>
       </div>
 
-      <div class="work-item reveal">
+      <div class="work-item reveal" data-cat="data">
         <div class="work-num">03</div>
         <div class="work-body">
           <div class="work-meta">
@@ -601,7 +614,7 @@ footer a { color: var(--accent); }
         </div>
       </div>
 
-      <div class="work-item reveal">
+      <div class="work-item reveal" data-cat="software">
         <div class="work-num">04</div>
         <div class="work-body">
           <div class="work-meta">
@@ -619,7 +632,31 @@ footer a { color: var(--accent); }
     <!-- MINI PROJECTS -->
     <div class="mini-grid">
 
-      <div class="mini reveal">
+      <div class="mini reveal" data-cat="data ai">
+        <div class="top">
+          <span class="folder">🌍</span>
+          <div class="links">
+            <a href="https://github.com/Urspragna/germany-air-quality-2023" target="_blank" rel="noopener" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></a>
+          </div>
+        </div>
+        <h3>Air Quality Analysis — Germany 2023</h3>
+        <p><em>M.Sc. Computer Science (Big Data course) · Universität Rostock.</em> Distributed ETL on a 4-node HDFS cluster (2.8M+ sensor readings), interactive Plotly dashboards with WHO compliance tracking, IQR outlier detection, spatial hotspot maps, and a Prophet 30-day PM2.5 forecast. 78% of sensor locations exceed WHO limits.</p>
+        <div class="mtags"><span>PySpark</span><span>HDFS</span><span>Plotly</span><span>Prophet</span><span>Pandas</span></div>
+      </div>
+
+      <div class="mini reveal" data-cat="ai">
+        <div class="top">
+          <span class="folder">🎵</span>
+          <div class="links">
+            <a href="https://github.com/Urspragna/folk-tune-generator" target="_blank" rel="noopener" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></a>
+          </div>
+        </div>
+        <h3>Folk Tune Generator — TunesFormer + Constrained Decoding</h3>
+        <p><em>M.Sc. Computer Science (Advanced Neural Networks course) · Universität Rostock.</em> Upgraded from fine-tuned GPT-2 to <strong>TunesFormer</strong>, a Transformer pre-trained on ABC-notation folk tunes with structured control codes (tune type · meter · key). Custom <code>ABCOnlyLogitsProcessor</code> constrains decoding to valid ABC tokens. Generates reels, jigs, waltzes, and hornpipes on demand.</p>
+        <div class="mtags"><span>PyTorch</span><span>HuggingFace</span><span>TunesFormer</span><span>Constrained Decoding</span><span>music21</span></div>
+      </div>
+
+      <div class="mini reveal" data-cat="software">
         <div class="top">
           <span class="folder">📁</span>
           <div class="links">
@@ -631,7 +668,7 @@ footer a { color: var(--accent); }
         <div class="mtags"><span>Angular</span><span>Micro Frontends</span><span>Jest</span><span>MongoDB</span><span>MySQL</span></div>
       </div>
 
-      <div class="mini reveal d1">
+      <div class="mini reveal" data-cat="software">
         <div class="top">
           <span class="folder">📁</span>
           <div class="links">
@@ -639,11 +676,11 @@ footer a { color: var(--accent); }
           </div>
         </div>
         <h3>Real-Time Diagnostics Platform</h3>
-        <p><em>Accenture / General Electric.</em> Angular 13 app handling high-volume diagnostic streams. Optimized with lazy loading, virtual scrolling, RBAC. Real-time patterns directly transfer to model-serving UIs.</p>
+        <p><em>Accenture / General Electric.</em> Angular 13 app handling high-volume diagnostic streams. Optimized with lazy loading, virtual scrolling, RBAC.</p>
         <div class="mtags"><span>Angular 13</span><span>RBAC</span><span>Streaming</span><span>Interceptors</span></div>
       </div>
 
-      <div class="mini reveal d2">
+      <div class="mini reveal" data-cat="software">
         <div class="top">
           <span class="folder">📁</span>
           <div class="links">
@@ -653,30 +690,6 @@ footer a { color: var(--accent); }
         <h3>FirstNet Broadband Platform</h3>
         <p><em>Accenture / AT&amp;T.</em> Optimized a mission-critical Angular SPA across a team. Code splitting, AOT, accessibility. Active in architecture reviews and code review.</p>
         <div class="mtags"><span>Angular</span><span>AOT</span><span>Accessibility</span><span>Agile</span></div>
-      </div>
-
-      <div class="mini reveal">
-        <div class="top">
-          <span class="folder">🌍</span>
-          <div class="links">
-            <a href="https://github.com/Urspragna/germany-air-quality-2023" target="_blank" rel="noopener" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></a>
-          </div>
-        </div>
-        <h3>Air Quality Analysis — Germany 2023</h3>
-        <p><em>M.Sc. Big Data · Universität Rostock.</em> Distributed ETL on a 4-node HDFS cluster (2.8M+ sensor readings), interactive Plotly dashboards with WHO compliance tracking, IQR outlier detection, spatial hotspot maps, and a Prophet 30-day PM2.5 forecast. 78% of sensor locations exceed WHO limits.</p>
-        <div class="mtags"><span>PySpark</span><span>HDFS</span><span>Plotly</span><span>Prophet</span><span>Pandas</span></div>
-      </div>
-
-      <div class="mini reveal d1">
-        <div class="top">
-          <span class="folder">🎵</span>
-          <div class="links">
-            <a href="https://github.com/Urspragna/folk-tune-generator" target="_blank" rel="noopener" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></a>
-          </div>
-        </div>
-        <h3>Folk Tune Generator — TunesFormer + Constrained Decoding</h3>
-        <p><em>M.Sc. Advanced Neural Networks · Universität Rostock.</em> Upgraded from fine-tuned GPT-2 to <strong>TunesFormer</strong>, a Transformer pre-trained on ABC-notation folk tunes with structured control codes (tune type · meter · key). Custom <code>ABCOnlyLogitsProcessor</code> constrains decoding to valid ABC tokens. Generates reels, jigs, waltzes, and hornpipes on demand.</p>
-        <div class="mtags"><span>PyTorch</span><span>HuggingFace</span><span>TunesFormer</span><span>Constrained Decoding</span><span>music21</span></div>
       </div>
 
     </div>
@@ -800,7 +813,7 @@ footer a { color: var(--accent); }
         <div class="tag-title">LANGUAGES</div>
         <h4>English — C1 <span style="color:var(--text-muted);font-weight:400;font-size:13px">(Advanced)</span></h4>
         <div class="divider" style="margin:12px 0"></div>
-        <h4>German — A1 <span style="color:var(--text-muted);font-weight:400;font-size:13px">(actively learning)</span></h4>
+        <h4>German — A2 <span style="color:var(--text-muted);font-weight:400;font-size:13px">(actively learning)</span></h4>
         <div class="divider" style="margin:12px 0"></div>
         <h4>Hindi — B2</h4>
         <div class="divider" style="margin:12px 0"></div>
@@ -863,13 +876,13 @@ footer a { color: var(--accent); }
   <div class="head">
     <div>
       <div class="ttl"><span class="robot">⚡</span>Ask Pragna</div>
-      <div class="sub">Retrieval · grounded on her CV</div>
+      <div class="sub">AI assistant · answers from Pragna’s CV &amp; notes</div>
     </div>
     <button class="x" id="chat-close" aria-label="Close">✕</button>
   </div>
   <div class="body" id="chat-body">
       <div class="msg bot">
-      Hey — it's me, Pragna (grounded on what I've written about myself). Ask me anything: my work, the platform, why I moved to Rostock, or how I build production-ready systems.
+      Hi! I'm an AI version of Pragna. I answer from her CV and notes, so I can be wrong about details. Ask me anything: my work, the platform, why I moved to Rostock, or how I build production-ready systems.
     </div>
   </div>
   <div class="suggest">
@@ -1133,6 +1146,17 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
   sug.forEach(b => b.addEventListener('click', () => ask(b.dataset.q)));
 })();
 
+</script>
+<script>
+document.querySelectorAll('.wf-btn').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var f = btn.dataset.filter;
+    document.querySelectorAll('.wf-btn').forEach(function (b) { b.classList.toggle('active', b === btn); });
+    document.querySelectorAll('#work [data-cat]').forEach(function (el) {
+      el.classList.toggle('wf-hidden', f !== 'all' && el.dataset.cat.split(' ').indexOf(f) === -1);
+    });
+  });
+});
 </script>
 </body>
 </html>
