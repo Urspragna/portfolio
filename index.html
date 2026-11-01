@@ -580,10 +580,10 @@ footer a { color: var(--accent); }
         <div class="work-body">
           <div class="work-meta">
             <span class="work-type">Live AI system</span>
-            <span class="work-tags">Python · FastAPI · RAG · sentence-transformers · NumPy · Groq · SSE</span>
+            <span class="work-tags">Python · FastAPI · RAG · sentence-transformers · pgvector · Groq · SSE</span>
           </div>
           <h3 class="work-title">Live RAG Chatbot — This Portfolio</h3>
-          <p class="work-desc">No-framework RAG from scratch: chunk → 384-dim sentence-transformers embeddings → cosine similarity (NumPy, in memory) → LLM → SSE. Pluggable providers (Anthropic, Groq, Ollama); the live widget runs on Groq. No LangChain, no LlamaIndex — ~200 lines of Python, Dockerised on Railway. The chat widget on this page runs it live.</p>
+          <p class="work-desc">No-framework RAG from scratch: chunk → 384-dim sentence-transformers embeddings → cosine search in PostgreSQL + pgvector (HNSW index), with an in-memory NumPy fallback → LLM → SSE. Pluggable providers (Anthropic, Groq, Ollama); the live widget runs on Groq. No LangChain, no LlamaIndex — ~200 lines of Python, Dockerised on Railway. The chat widget on this page runs it live.</p>
           <a href="#chat" class="work-link">Try it live ↑</a>
         </div>
       </div>

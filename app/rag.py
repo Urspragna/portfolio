@@ -123,6 +123,64 @@ class RAGIndex:
         return len(self.chunks)
 
 
+def pg_dsn(database_url: str) -> str | None:
+    """Turn the SQLAlchemy URL into a psycopg DSN; None if it isn't Postgres."""
+    m = re.match(r"^postgres(?:ql)?(?:\+\w+)?://", database_url)
+    return "postgresql://" + database_url[m.end():] if m else None
+
+
+class PgVectorIndex:
+    """Vector index stored in PostgreSQL with pgvector (HNSW, cosine distance).
+
+    Same interface as RAGIndex. Chunks are re-embedded and re-written on every
+    startup, so editing the knowledge base and restarting is still the update path.
+    """
+
+    TABLE = "rag_chunks"
+
+    def __init__(self, chunks: list[Chunk], embedder: Embedder, dsn: str) -> None:
+        import psycopg  # type: ignore
+        from pgvector.psycopg import register_vector  # type: ignore
+
+        self.chunks = chunks
+        self.embedder = embedder
+        self.conn = psycopg.connect(dsn, autocommit=True)
+        self.conn.execute("CREATE EXTENSION IF NOT EXISTS vector")
+        register_vector(self.conn)
+        dim = embedder.dim
+        with self.conn.transaction():
+            self.conn.execute(f"DROP TABLE IF EXISTS {self.TABLE}")
+            self.conn.execute(
+                f"CREATE TABLE {self.TABLE} (id integer PRIMARY KEY, title text NOT NULL,"
+                f" text text NOT NULL, embedding vector({dim}) NOT NULL)"
+            )
+            if chunks:
+                vecs = embedder.encode([c.text for c in chunks])
+                with self.conn.cursor() as cur:
+                    cur.executemany(
+                        f"INSERT INTO {self.TABLE} (id, title, text, embedding) VALUES (%s, %s, %s, %s)",
+                        [(i, c.title, c.text, vecs[i]) for i, c in enumerate(chunks)],
+                    )
+            self.conn.execute(
+                f"CREATE INDEX ON {self.TABLE} USING hnsw (embedding vector_cosine_ops)"
+            )
+
+    def retrieve(self, query: str, *, k: int = 4) -> list[Hit]:
+        if not self.chunks:
+            return []
+        q = self.embedder.encode([query])[0]
+        rows = self.conn.execute(
+            f"SELECT id, 1 - (embedding <=> %s) AS score FROM {self.TABLE}"
+            " ORDER BY embedding <=> %s LIMIT %s",
+            (q, q, k),
+        ).fetchall()
+        # Cosine similarity can dip below 0; clamp to match RAGIndex's 0..1 range
+        return [Hit(chunk=self.chunks[i], score=max(0.0, float(s))) for i, s in rows]
+
+    def __len__(self) -> int:  # pragma: no cover
+        return len(self.chunks)
+
+
 # Prompt assembly
 
 SYSTEM_PROMPT = """You are Pragna's portfolio assistant. You speak as Pragna, in first person — warm, direct, and specific.
@@ -160,8 +218,12 @@ def build_prompt(question: str, hits: list[Hit], *, max_chars: int) -> str:
 
 # Bootstrap
 
-def load_index(settings: Settings | None = None) -> RAGIndex:
-    """Build the index from the configured knowledge_base file."""
+def load_index(settings: Settings | None = None) -> RAGIndex | PgVectorIndex:
+    """Build the index from the configured knowledge_base file.
+
+    vector_store "auto" uses pgvector when DATABASE_URL points at Postgres and
+    falls back to the in-memory index if that fails, so chat never goes down.
+    """
     settings = settings or get_settings()
     md = Path(settings.knowledge_base_path).read_text(encoding="utf-8")
     chunks = chunk_markdown(md, min_chars=settings.chunk_min_chars)
@@ -171,4 +233,17 @@ def load_index(settings: Settings | None = None) -> RAGIndex:
             "Knowledge base must contain `## CHUNK: <title>` blocks."
         )
     embedder = Embedder(settings)
-    return RAGIndex(chunks, embedder)
+    dsn = pg_dsn(settings.database_url)
+    if settings.vector_store == "memory" or (settings.vector_store == "auto" and not dsn):
+        return RAGIndex(chunks, embedder)
+    if not dsn:
+        raise RuntimeError("VECTOR_STORE=pgvector needs a PostgreSQL DATABASE_URL")
+    try:
+        index = PgVectorIndex(chunks, embedder, dsn)
+        print(f"[rag] vector store: pgvector ({len(chunks)} chunks)")
+        return index
+    except Exception as exc:
+        if settings.vector_store == "pgvector":
+            raise
+        print(f"[rag] pgvector unavailable ({type(exc).__name__}: {exc}); using in-memory index")
+        return RAGIndex(chunks, embedder)

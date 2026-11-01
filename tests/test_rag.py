@@ -115,3 +115,51 @@ def test_build_prompt_respects_max_chars():
     hits = index.retrieve("word", k=1)
     prompt = build_prompt("question?", hits, max_chars=100)
     assert len(prompt) < len(long_text)
+
+
+# ── pgvector store ───────────────────────────────────────────────────────────
+
+import os
+
+from app.rag import PgVectorIndex, load_index, pg_dsn
+
+
+def test_pg_dsn_converts_sqlalchemy_urls():
+    assert pg_dsn("postgresql+asyncpg://u:p@db:5432/x") == "postgresql://u:p@db:5432/x"
+    assert pg_dsn("postgres://u:p@db/x") == "postgresql://u:p@db/x"
+    assert pg_dsn("sqlite+aiosqlite:///portfolio.db") is None
+
+
+def test_load_index_uses_memory_for_sqlite():
+    settings = Settings(embedding_provider="hash", database_url="sqlite+aiosqlite:///x.db")
+    assert isinstance(load_index(settings), RAGIndex)
+
+
+def test_load_index_falls_back_when_postgres_unreachable():
+    settings = Settings(
+        embedding_provider="hash",
+        database_url="postgresql+asyncpg://nobody:nothing@127.0.0.1:1/none",
+    )
+    assert isinstance(load_index(settings), RAGIndex)
+
+
+PG_URL = os.environ.get("PGVECTOR_TEST_URL")
+
+
+@pytest.mark.skipif(not PG_URL, reason="set PGVECTOR_TEST_URL to a pgvector database")
+def test_pgvector_index_matches_memory_index():
+    settings = Settings(embedding_provider="hash", embedding_dim=384)
+    embedder = Embedder(settings)
+    texts = [
+        "Python machine learning neural networks data science",
+        "Cooking recipes pasta dinner Italian food",
+        "FastAPI backend REST API deployment Docker",
+    ]
+    chunks = [Chunk(title=f"chunk_{i}", text=t) for i, t in enumerate(texts)]
+    pg = PgVectorIndex(chunks, embedder, pg_dsn(PG_URL))
+    mem = RAGIndex(chunks, embedder)
+    for q in ["machine learning Python", "REST API Docker", "pasta"]:
+        pg_hits, mem_hits = pg.retrieve(q, k=3), mem.retrieve(q, k=3)
+        assert [h.chunk.title for h in pg_hits] == [h.chunk.title for h in mem_hits]
+        for a, b in zip(pg_hits, mem_hits):
+            assert abs(a.score - b.score) < 1e-4

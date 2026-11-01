@@ -92,7 +92,7 @@ uvicorn app.main:app --reload
 cp .env.example .env && docker compose up --build
 ```
 
-Brings up FastAPI on `:8000` and Postgres+pgvector on `:5432`. To use pgvector for storage instead of in-memory vectors, edit `app/rag.py` to write/read from a `vector(384)` column.
+Brings up FastAPI on `:8000` and Postgres+pgvector on `:5432`. With `DATABASE_URL` pointing at Postgres, the RAG chunks are written to a `rag_chunks` table (`vector(384)`, HNSW index, cosine distance) on startup and retrieved from there. `VECTOR_STORE=auto` (default) falls back to the in-memory NumPy index if pgvector is unavailable; `memory` or `pgvector` force one. Run the integration test with `PGVECTOR_TEST_URL=postgresql://... pytest`.
 
 ---
 
@@ -147,7 +147,7 @@ Covers `chunk_markdown` splitting, `RAGIndex.retrieve` relevance and edge cases,
 - **No framework (frontend)** — hand-written HTML/CSS/JS, readable in any editor
 - **No migrations** — add Alembic when schema grows
 - **No auth** — open by design, add rate-limiting before public deploy
-- **In-memory vectors** — faster than DB round-trips for ~15 chunks, swap at scale
+- **pgvector with in-memory fallback** — vectors live in Postgres (HNSW) when a database is configured; the NumPy index keeps chat working without one
 
 ---
 

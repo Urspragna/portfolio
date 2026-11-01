@@ -19,9 +19,9 @@ I didn't decide to "switch into AI." I kept seeing the same problems in fintech,
 ## CHUNK: The tech stack that powers this very chatbot
 This portfolio's chatbot is the live AI artefact on the site. Anyone asking what runs underneath should get a precise answer.
 
-Backend: Python 3.12 with FastAPI (async, type-safe), Uvicorn as the ASGI server, Pydantic v2 for request validation, SQLAlchemy 2.0 (async) as the ORM. SQLite + aiosqlite for development, PostgreSQL + asyncpg for production (with pgvector ready when chunk counts grow).
+Backend: Python 3.12 with FastAPI (async, type-safe), Uvicorn as the ASGI server, Pydantic v2 for request validation, SQLAlchemy 2.0 (async) as the ORM. SQLite + aiosqlite for development, PostgreSQL + asyncpg for production (the RAG chunks live in a pgvector table there).
 
-AI layer: a from-scratch RAG pipeline in roughly 200 lines of Python — no LangChain, no LlamaIndex. The pipeline chunks the knowledge base on `## CHUNK:` markers, embeds each chunk into a 384-dim vector via sentence-transformers (`all-MiniLM-L6-v2`), retrieves top-k via cosine similarity using NumPy, stitches retrieved passages into a system-prompted prompt, then streams the LLM response back to the browser as Server-Sent Events.
+AI layer: a from-scratch RAG pipeline in roughly 200 lines of Python — no LangChain, no LlamaIndex. The pipeline chunks the knowledge base on `## CHUNK:` markers, embeds each chunk into a 384-dim vector via sentence-transformers (`all-MiniLM-L6-v2`), retrieves top-k by cosine distance from a PostgreSQL + pgvector table with an HNSW index (falling back to in-memory NumPy when no Postgres is configured, so chat never goes down), stitches retrieved passages into a system-prompted prompt, then streams the LLM response back to the browser as Server-Sent Events.
 
 LLM provider layer: pluggable. Options behind the same interface — Groq (Llama 3.3 70B) for fast production inference, Anthropic Claude for quality, Ollama for local free generation, and a deterministic echo provider as fallback. Provider is selected via the `LLM_PROVIDER` environment variable.
 
@@ -256,7 +256,7 @@ Stack: Angular · AOT · accessibility (WCAG-conscious) · Agile/Scrum.
 ## CHUNK: AI / ML skills (the things I actually do, not the things I list)
 LLM applications — building RAG pipelines, prompt engineering, eval harnesses (M.Sc. coursework + this portfolio).
 
-Retrieval-augmented generation — `sentence-transformers` for 384-dim embeddings, cosine similarity in NumPy (in memory) for retrieval, a Docker Compose stack with PostgreSQL + pgvector ready for persistent vectors, system-prompt design for grounded answers.
+Retrieval-augmented generation — `sentence-transformers` for 384-dim embeddings, cosine retrieval in PostgreSQL + pgvector with an HNSW index (in-memory NumPy fallback), tested against the in-memory version for identical rankings, system-prompt design for grounded answers.
 
 Embeddings — `sentence-transformers/all-MiniLM-L6-v2`, plus a deterministic hash-based fallback for environments that can't download models.
 
@@ -271,7 +271,7 @@ ML fundamentals — supervised, unsupervised, evaluation methodology.
 
 **Frameworks I've shipped to production:** Angular (SPAs, Micro Frontends, OnPush change detection, lazy loading), Flask, Spring Boot, Django, FastAPI (this portfolio), REST APIs, Material-UI, Bootstrap.
 
-**Databases:** PostgreSQL (schema design, optimisation; pgvector in my Docker Compose stack), MongoDB, MySQL, SQLite. SQL pipelines processing telemetry at 10K+ user scale.
+**Databases:** PostgreSQL (schema design, optimisation; pgvector with HNSW indexes for my RAG chatbot), MongoDB, MySQL, SQLite. SQL pipelines processing telemetry at 10K+ user scale.
 
 **Analytics & BI:** Power BI, Databricks, Microsoft Graph API.
 

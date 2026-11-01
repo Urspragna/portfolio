@@ -25,5 +25,6 @@ torch==2.2.2+cpu
 sentence-transformers==3.0.1
 transformers==4.44.2
 
-# Optional: pgvector adapter (uncomment when moving to Postgres)
-# pgvector==0.3.6
+# pgvector vector store (used when DATABASE_URL is PostgreSQL)
+psycopg[binary]==3.2.3
+pgvector==0.3.6

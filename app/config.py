@@ -45,6 +45,8 @@ class Settings(BaseSettings):
     chunk_min_chars: int = 80
     retrieval_k: int = 4
     max_context_chars: int = 4000
+    # auto: pgvector when DATABASE_URL is Postgres, else in-memory NumPy
+    vector_store: Literal["auto", "memory", "pgvector"] = "auto"
 
     # Frontend
     public_dir: Path = Field(default_factory=lambda: ROOT)
