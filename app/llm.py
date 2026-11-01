@@ -98,6 +98,26 @@ class GroqLLM:
             raise RuntimeError("GROQ_API_KEY is required for the groq provider")
         self.api_key = settings.groq_api_key
         self.model = settings.groq_model
+        self._model_checked = False
+
+    # Groq retires models regularly; if the configured one is gone, use the
+    # closest model it still serves instead of failing every chat.
+    PREFERRED = ("llama-3.3-70b", "gpt-oss-120b", "llama-4", "70b", "llama")
+
+    async def _resolve_model(self, client: httpx.AsyncClient, headers: dict) -> None:
+        if self._model_checked:
+            return
+        try:
+            resp = await client.get("https://api.groq.com/openai/v1/models", headers=headers)
+            resp.raise_for_status()
+            ids = [m["id"] for m in resp.json().get("data", [])]
+            if ids and self.model not in ids:
+                pick = next((i for p in self.PREFERRED for i in ids if p in i), ids[0])
+                print(f"[llm] groq model {self.model} unavailable; using {pick}")
+                self.model = pick
+            self._model_checked = True
+        except Exception as exc:  # keep the configured model; chat call reports errors
+            print(f"[llm] could not list groq models ({type(exc).__name__})")
 
     async def stream(self, prompt: str) -> AsyncIterator[str]:
         import json
@@ -105,6 +125,8 @@ class GroqLLM:
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
         }
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            await self._resolve_model(client, headers)
         payload = {
             "model": self.model,
             "max_tokens": 600,

@@ -163,3 +163,33 @@ def test_pgvector_index_matches_memory_index():
         assert [h.chunk.title for h in pg_hits] == [h.chunk.title for h in mem_hits]
         for a, b in zip(pg_hits, mem_hits):
             assert abs(a.score - b.score) < 1e-4
+
+
+# ── Groq model fallback ──────────────────────────────────────────────────────
+
+import asyncio
+
+import httpx
+
+from app.llm import GroqLLM
+
+
+def _groq_with_models(model: str, ids: list[str]) -> GroqLLM:
+    llm = GroqLLM(Settings(groq_api_key="test", groq_model=model))
+    transport = httpx.MockTransport(lambda req: httpx.Response(200, json={"data": [{"id": i} for i in ids]}))
+
+    async def run():
+        async with httpx.AsyncClient(transport=transport) as client:
+            await llm._resolve_model(client, {})
+
+    asyncio.run(run())
+    return llm
+
+
+def test_groq_keeps_available_model():
+    assert _groq_with_models("llama-3.3-70b-versatile", ["llama-3.3-70b-versatile", "x"]).model == "llama-3.3-70b-versatile"
+
+
+def test_groq_replaces_retired_model():
+    llm = _groq_with_models("llama3-70b-8192", ["whisper-large-v3", "openai/gpt-oss-120b", "llama-3.1-8b-instant"])
+    assert llm.model == "openai/gpt-oss-120b"
