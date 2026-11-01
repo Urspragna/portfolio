@@ -435,7 +435,7 @@ footer a { color: var(--accent); }
       </div>
       <div class="about-text reveal">
         <p>I’m Pragna — started as a frontend engineer, grew into full-stack, then moved into data at TCS where I built analytics pipelines and dashboards on top of Microsoft Graph API. Each step added a layer: UI craft, then backend and systems thinking, then data at scale. Now doing an M.Sc. in CS, where that whole arc is pointing toward applied AI.</p>
-        <p>Recently worked as a <strong>Werkstudent AI Developer at Baltic Agent Systems UG</strong> (Jul–Sep 2026), building an AI-assisted ride-planning and dispatch backend — OpenStreetMap routing, regional tariff fare computation, and driver availability scheduling.</p>
+        <p>Recently worked as a <strong>Werkstudent AI Developer at Baltic Agent Systems UG</strong> (Aug–Oct 2026), where I built an AI-assisted ride-planning and dispatch backend — OpenStreetMap routing, regional tariff fare computation, and driver availability scheduling.</p>
         <p>I care about the engineering that makes products survive: logging, tests, observability, deployment, and code review. Those are the real reasons production systems succeed or fail.</p>
       </div>
       <div class="about-card reveal d2">
@@ -482,7 +482,7 @@ footer a { color: var(--accent); }
           <span class="tag">TunesFormer</span>
           <span class="tag">Constrained Decoding</span>
           <span class="tag">Prophet</span>
-          <span class="tag">LLM APIs (Groq)</span>
+          <span class="tag">LLM APIs (Anthropic, Groq, Ollama)</span>
         </div>
       </div>
       <div class="skill-card reveal d1">
@@ -580,10 +580,10 @@ footer a { color: var(--accent); }
         <div class="work-body">
           <div class="work-meta">
             <span class="work-type">Live AI system</span>
-            <span class="work-tags">Python · FastAPI · RAG · sentence-transformers · Groq · SSE</span>
+            <span class="work-tags">Python · FastAPI · RAG · sentence-transformers · NumPy · Groq · SSE</span>
           </div>
           <h3 class="work-title">Live RAG Chatbot — This Portfolio</h3>
-          <p class="work-desc">No-framework RAG from scratch: chunk → embed → cosine similarity → Groq llama-3.3 70B → SSE. No LangChain, no LlamaIndex — ~200 lines of Python. The chat widget on this page runs it live.</p>
+          <p class="work-desc">No-framework RAG from scratch: chunk → 384-dim sentence-transformers embeddings → cosine similarity (NumPy, in memory) → LLM → SSE. Pluggable providers (Anthropic, Groq, Ollama); the live widget runs on Groq. No LangChain, no LlamaIndex — ~200 lines of Python, Dockerised on Railway. The chat widget on this page runs it live.</p>
           <a href="#chat" class="work-link">Try it live ↑</a>
         </div>
       </div>
@@ -704,14 +704,14 @@ footer a { color: var(--accent); }
     <div class="timeline">
 
       <div class="tl-item reveal">
-        <div class="period">JUL 2026 — SEP 2026</div>
+        <div class="period">AUG 2026 — OCT 2026</div>
         <h3>AI Developer <em style="font-weight:400;font-size:0.9em">(KI-Entwicklerin)</em></h3>
         <div class="company">Baltic Agent Systems UG · <em>Rostock, Germany (Remote)</em></div>
         <div class="role-group">
           <h4>// AI-Assisted Ride-Planning &amp; Dispatch Backend</h4>
           <ul>
-            <li>Building an AI-assisted dispatch backend for a taxi/booking platform: <strong>OpenStreetMap</strong>-based route calculation, fare computation per official regional tariff regulation, and driver/vehicle availability scheduling.</li>
-            <li>Programming AI applications and supporting AI-systems training as part of ongoing engineering work.</li>
+            <li>Built an AI-assisted dispatch backend for a taxi/booking platform: <strong>OpenStreetMap</strong>-based route calculation, fare computation per official regional tariff regulation, and driver/vehicle availability scheduling.</li>
+            <li>Programmed AI applications and supported AI-systems training.</li>
           </ul>
         </div>
       </div>
@@ -744,8 +744,22 @@ footer a { color: var(--accent); }
 
       <div class="tl-item reveal">
         <div class="period">DEC 2020 — FEB 2025</div>
-        <h3>Application Development Analyst / Associate</h3>
+        <h3>Application Development Analyst</h3>
         <div class="company">Accenture Solutions Pvt Ltd · <em>Bengaluru, India</em></div>
+        <div class="role-group">
+          <h4>// Enterprise Asset Management Analytics</h4>
+          <ul>
+            <li>Implemented AI-driven data pipelines with <strong>Python, SQL and Databricks</strong> on data from <code>ADLS Gen2</code> and <code>BigQuery</code>.</li>
+            <li>Applied <strong>machine learning and time series forecasting</strong> to asset lifecycle data for predictive maintenance, asset replacement and procurement decisions.</li>
+          </ul>
+        </div>
+        <div class="role-group">
+          <h4>// Cox Communications — Address Connect</h4>
+          <ul>
+            <li>Built efficient data models and optimised queries for <strong>MongoDB and MySQL</strong>; developed RESTful APIs secured with <strong>JWT and OAuth2</strong>.</li>
+            <li>Mentored junior developers; kept code quality up with <code>SonarQube</code> and documented APIs with Swagger and Postman.</li>
+          </ul>
+        </div>
         <div class="role-group">
           <h4>// Bank of America — Self-Service SPA</h4>
           <ul>

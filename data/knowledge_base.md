@@ -206,6 +206,25 @@ Stack: SQL · Python · Power BI · Databricks · Microsoft Graph API.
 
 ---
 
+## CHUNK: Baltic Agent Systems — Werkstudent AI Developer
+AI Developer (KI-Entwicklerin), Werkstudent / Minijob at Baltic Agent Systems UG, Rostock (home office), Aug 2026 – Oct 2026. Built an AI-assisted ride-planning and dispatch backend for a taxi/booking platform: OpenStreetMap-based route calculation, fare computation per official regional tariff regulation, and driver/vehicle availability scheduling. Programmed AI applications and supported AI-systems training.
+
+---
+
+## CHUNK: Enterprise Asset Management Analytics at Accenture — the project facts
+Accenture, Application Development Analyst. Implemented AI-driven data pipelines with Python, SQL and Databricks for the Enterprise Asset Management Analytics project, using data from ADLS Gen2 and BigQuery. Applied machine learning and time series forecasting to model asset lifecycle behaviour for predictive maintenance, asset replacement and procurement decisions.
+
+Stack: Python · SQL · Databricks · ADLS Gen2 · BigQuery · time series forecasting.
+
+---
+
+## CHUNK: Address Connect (Cox Communications) at Accenture — the project facts
+Built efficient data models and optimised queries for MongoDB and MySQL, and developed RESTful APIs secured with JWT and OAuth2. Mentored junior developers. This project earned the All-Star Award (Go-Getter Award, August 2024); a Kudos Award followed in 2024.
+
+Stack: MongoDB · MySQL · REST APIs · JWT · OAuth2 · SonarQube · Swagger.
+
+---
+
 ## CHUNK: Bank of America Self-Service SPA — the project facts
 Accenture client. Architected a modular Angular SPA with a reusable component library and full Jenkins CI/CD pipeline, lifting user task-completion **+4%** on a regulated banking platform. Integrated Glassbox session analytics with JWT-based auth — pushed fraud-detection accuracy **+12%** through real-time behavioural event tracking.
 
@@ -237,7 +256,7 @@ Stack: Angular · AOT · accessibility (WCAG-conscious) · Agile/Scrum.
 ## CHUNK: AI / ML skills (the things I actually do, not the things I list)
 LLM applications — building RAG pipelines, prompt engineering, eval harnesses (M.Sc. coursework + this portfolio).
 
-Retrieval-augmented generation — pgvector and `sentence-transformers` for embeddings, cosine similarity for retrieval, system-prompt design for grounded answers.
+Retrieval-augmented generation — `sentence-transformers` for 384-dim embeddings, cosine similarity in NumPy (in memory) for retrieval, a Docker Compose stack with PostgreSQL + pgvector ready for persistent vectors, system-prompt design for grounded answers.
 
 Embeddings — `sentence-transformers/all-MiniLM-L6-v2`, plus a deterministic hash-based fallback for environments that can't download models.
 
@@ -252,7 +271,7 @@ ML fundamentals — supervised, unsupervised, evaluation methodology.
 
 **Frameworks I've shipped to production:** Angular (SPAs, Micro Frontends, OnPush change detection, lazy loading), Flask, Spring Boot, Django, FastAPI (this portfolio), REST APIs, Material-UI, Bootstrap.
 
-**Databases:** PostgreSQL (schema design, optimisation, currently using pgvector), MongoDB, MySQL, SQLite. SQL pipelines processing telemetry at 10K+ user scale.
+**Databases:** PostgreSQL (schema design, optimisation; pgvector in my Docker Compose stack), MongoDB, MySQL, SQLite. SQL pipelines processing telemetry at 10K+ user scale.
 
 **Analytics & BI:** Power BI, Databricks, Microsoft Graph API.
 
