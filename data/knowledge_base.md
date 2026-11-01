@@ -207,7 +207,7 @@ Stack: SQL · Python · Power BI · Databricks · Microsoft Graph API.
 ---
 
 ## CHUNK: Baltic Agent Systems — Werkstudent AI Developer
-AI Developer (KI-Entwicklerin), Werkstudent / Minijob at Baltic Agent Systems UG, Rostock (home office), Aug 2026 – Oct 2026. Built an AI-assisted ride-planning and dispatch backend for a taxi/booking platform: OpenStreetMap-based route calculation, fare computation per official regional tariff regulation, and driver/vehicle availability scheduling. Programmed AI applications and supported AI-systems training.
+AI Developer (KI-Entwicklerin), Werkstudent / Minijob at Baltic Agent Systems UG, Rostock (home office), Jul 2026 – Sep 2026. Built an AI-assisted ride-planning and dispatch backend for a taxi/booking platform: OpenStreetMap-based route calculation, fare computation per official regional tariff regulation, and driver/vehicle availability scheduling. Programmed AI applications and supported AI-systems training.
 
 ---
 
